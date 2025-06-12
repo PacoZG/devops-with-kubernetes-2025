@@ -1,4 +1,4 @@
-# Exercise 1.01: Getting started
+# Log Output
 
 ### Javascript implementation based on app1 from material example
 ```javascript
@@ -18,7 +18,6 @@ const stringGenerator = () => {
 }
 
 stringGenerator()
-
 ```
 I used the same Dockerfile to build the image but I implemented a basic docker-compose file to run it
 

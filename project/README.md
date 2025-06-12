@@ -1,4 +1,4 @@
-# Exercise 1.2: Project v1.0
+# Project v1.0
 
 ### Javascript implementation based on app1 from material example
 

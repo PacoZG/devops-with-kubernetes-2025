@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      containers:
+      - name: log-output
+        image: sirpacoder/log-output:v1.1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+

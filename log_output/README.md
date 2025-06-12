@@ -51,13 +51,13 @@ Below we can find the commands used in the terminal to build the image, push it 
 ```shell
     docker-compose up -d
     
-    docker tag log-output sirpacoder/log-output:v1.0
+    docker tag log-output sirpacoder/log-output:v1.1
     
-    docker push sirpacoder/log-output:v1.0
+    docker push sirpacoder/log-output:v1.1
 ```
 
 ```shell
-    kubectl create deployment log-output-dep --image=sirpacoder/log-output:v1.0
+    kubectl create deployment log-output-dep --image=sirpacoder/log-output:v1.1
     
     kubectl get pods
     

@@ -4,6 +4,6 @@ services:
   log-output:
     image: log-output
     build:
-      context: ./log-output
+      context: /log-output
       dockerfile: Dockerfile
     container_name: log-output

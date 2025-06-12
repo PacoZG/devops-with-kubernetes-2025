@@ -21,6 +21,7 @@ stringGenerator()
 
 ```
 I used the same Dockerfile to build the image but I implemented a basic docker-compose file to run it
+
 ```yaml
 version: '3.9'
 
@@ -28,12 +29,12 @@ services:
   log-output:
     image: log-output
     build:
-      context: .
+      context: /log-output
       dockerfile: Dockerfile
     container_name: log-output
 ```
 
-The image can be found [here](https://hub.docker.com/r/sirpacoder/log-output)
+The image can be found [here](https://hub.docker.com/r/sirpacoder/log-output/tags)
 
 Below we can find the commands used in the terminal to build the image, push it to Docker Hub and create en run the Kubernetes cluster
 
@@ -50,13 +51,13 @@ Below we can find the commands used in the terminal to build the image, push it 
 ```shell
     docker-compose up -d
     
-    docker tag log-output sirpacoder/log-output
+    docker tag log-output sirpacoder/log-output:v1.0
     
-    docker push sirpacoder/log-output:v2.0
+    docker push sirpacoder/log-output:v1.0
 ```
 
 ```shell
-    kubectl create deployment log-output-dep --image=sirpacoder/log-output
+    kubectl create deployment log-output-dep --image=sirpacoder/log-output:v1.0
     
     kubectl get pods
     
@@ -64,4 +65,3 @@ Below we can find the commands used in the terminal to build the image, push it 
     
     kubectl logs -f <pod-name>
 ```
-The result of the command used can be found in the [script file](./exercise-1.01.txt)

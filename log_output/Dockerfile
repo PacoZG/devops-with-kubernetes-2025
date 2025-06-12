@@ -6,6 +6,6 @@ COPY package* ./
 
 RUN npm ci
 
-COPY . .
+COPY log-output .
 
 CMD ["npm", "start"]

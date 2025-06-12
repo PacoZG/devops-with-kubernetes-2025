@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  server:
+    image: project
+    container_name: project
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001

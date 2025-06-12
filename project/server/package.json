@@ -1,0 +1,16 @@
+{
+  "name": "todo-server",
+  "version": "1.0.0",
+  "description": "Exercises DevOps with Kubernetes",
+  "main": "index.js",
+  "scripts": {
+    "server": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paco Zavala",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  }
+}

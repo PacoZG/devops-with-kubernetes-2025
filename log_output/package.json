@@ -1,0 +1,15 @@
+{
+  "name": "log-output",
+  "version": "1.0.0",
+  "description": "DevOps Kubernetes exercise 1.01",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Pacoder",
+  "license": "ISC",
+  "dependencies": {
+    "uuid": "^11.1.0"
+  },
+  "type": "module"
+}

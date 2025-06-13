@@ -14,6 +14,9 @@ spec:
       containers:
       - name: project
         image: sirpacoder/server:v1.5
+        env:
+          - name: PORT
+            value: "3001"
         resources:
           limits:
             memory: "128Mi"

@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.App {
+  min-height: 100vh;
+  background-color: burlywood;
+  /* opacity: .5; */
+}
+
+.TodoList {
+  padding: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  margin: 0px;
+}
+
+.todo {
+  border-style: dotted;
+  border-width: 2px;
+  margin-bottom: 10px;
+  padding: 20px;
+  background-color: crimson;
+}
+
+.text {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0px;
+  padding-bottom: 5px;
+}
+
+.status {
+  font-size: 20px;
+  margin: 0px;
+  font-weight: 700;
+}
+
+.span {
+  font-weight: 300;
+}

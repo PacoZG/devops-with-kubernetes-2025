@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: project
-        image: sirpacoder/project:v1.2
+        image: sirpacoder/server:v1.5
         resources:
           limits:
             memory: "128Mi"

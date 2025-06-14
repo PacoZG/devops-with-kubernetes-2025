@@ -6,8 +6,8 @@ const todos = [
 ]
 
 todoappRouter.get('/', (req, res) => {
-  console.log('GET request to /api/todos done succesfully')
-  res.status(201).send(todos)
+  console.log('GET request to /api/todos done successfully')
+  res.status(201).json(todos)
 })
 
 module.exports = todoappRouter

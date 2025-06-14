@@ -13,7 +13,8 @@ spec:
     spec:
       containers:
       - name: server
-        image: sirpacoder/server:v1.5
+        image: sirpacoder/server:v1.8
+        imagePullPolicy: Always
         env:
           - name: PORT
             value: "3001"

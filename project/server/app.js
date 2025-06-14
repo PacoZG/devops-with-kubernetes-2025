@@ -10,7 +10,7 @@ app.use(cors())
 app.use('/api/todos', todoappRouter)
 
 app.get('/health', (req, res) => {
-  res.send('ok')
+  res.json({ message: 'ok' })
 })
 
 module.exports = app

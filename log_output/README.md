@@ -1,66 +1,87 @@
-# Log Output
+# Exercise 1.07: External access with Ingress
 
-### Javascript implementation based on app1 from material example
-```javascript
-import { v4 } from  'uuid';
+### In order to make te right configuration I implemented the manifests files as follow:
 
-const stringGenerator = () => {
+- [deployment.yaml](../log_output/manifests/deployment.yml)
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      containers:
+      - name: log-output
+        image: sirpacoder/log-output:v1.7
+        imagePullPolicy: Always
+        env:
+          - name: PORT
+            value: "3001"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
 
-  const newString = v4()
-
-  const newDate = new Date()
-
-  const result = [newDate.toISOString() , newString].join(': ')
-
-  console.log(result)
-
-  setTimeout(stringGenerator, 5000)
-}
-
-stringGenerator()
 ```
-I used the same Dockerfile to build the image but I implemented a basic docker-compose file to run it
+___
+- [ingress.yaml](../log-output/manifests/ingress.yaml)
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: log-output
+  labels:
+    name: log-output
+spec:
+  rules:
+  - http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: log-output-svc
+            port:
+              number: 30081
+```
+___
+- [service.yaml](../project/manifests/service.yaml)
 
 ```yaml
-version: '3.9'
-
-services:
-  log-output:
-    image: log-output
-    build:
-      context: /log-output
-      dockerfile: Dockerfile
-    container_name: log-output
+apiVersion: v1
+kind: Service
+metadata:
+  name: log-output-svc
+spec:
+  selector:
+    app: log-output
+  ports:
+  - port: 30081
+    protocol: TCP
+    targetPort: 3001
 ```
-
-The image can be found [here](https://hub.docker.com/r/sirpacoder/log-output/tags)
-
-Below we can find the commands used in the terminal to build the image, push it to Docker Hub and create en run the Kubernetes cluster
+then created a new cluster using the following script
 
 ```shell
-    k3d cluster create -a 2
-    
-    kubectl cluster-info
-    
-    k3d kubeconfig get k3s-default
-    
-    kubectl config use-context k3d-k3s-default
+  k3d cluster create --port 3000:30081@agent:0 -p 8080:80@loadbalancer --agents 2
 ```
 
+followed by
 ```shell
-    docker-compose up -d
-    
-    docker tag log-output sirpacoder/log-output:v1.1
-    
-    docker push sirpacoder/log-output:v1.1
+  kubectl apply -f manifests/
 ```
 
-```shell
-    kubectl create deployment log-output-dep --image=sirpacoder/log-output:v1.1
-    
-    kubectl get pods
-    
-    kubectl get deployments
-    
-    kubectl logs -f <pod-name>
-```
+with that I was able to access the [http://localhost:8080/api/strings](http://localhost:8080/api/strings) port from the broswer
+
+The image are available in my Docker Hub at [log-output](https://hub.docker.com/r/sirpacoder/log-output/tag)

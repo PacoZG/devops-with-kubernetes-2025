@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:alpine
 
 WORKDIR /usr/src/app
 
@@ -6,6 +6,8 @@ COPY package* ./
 
 RUN npm ci
 
-COPY log-output .
+COPY . .
+
+EXPOSE 3001
 
 CMD ["npm", "start"]

@@ -14,9 +14,15 @@ spec:
     spec:
       containers:
       - name: log-output
-        image: sirpacoder/log-output:v1.1
+        image: sirpacoder/log-output:v1.7
+        imagePullPolicy: Always
+        env:
+          - name: PORT
+            value: "3001"
         resources:
           limits:
-            memory: "128Mi"
+            memory: "256Mi"
             cpu: "500m"
-
+          requests:
+            memory: "256Mi"
+            cpu: "500m"

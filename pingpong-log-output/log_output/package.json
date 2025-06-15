@@ -1,7 +1,7 @@
 {
   "name": "log-output",
   "version": "1.0.0",
-  "description": "DevOps Kubernetes exercise 1.01",
+  "description": "",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

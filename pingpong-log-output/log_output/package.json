@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "src/index.js",
+  "main": "",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "reader": "node hashReaderApp.js",
+    "generator": "node hashGeneratorApp.js",
+    "dev": "nodemon src/hashReaderApp.js & nodemon src/hashGeneratorApp.js"
   },
   "author": "Pacoder",
   "license": "ISC",

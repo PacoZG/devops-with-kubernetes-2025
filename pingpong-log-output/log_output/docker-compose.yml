@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  writer:
+    image: hash-generator
+    container_name: writer
+    build:
+      context: .
+      dockerfile: Dockerfile.generator
+    environment:
+      - PORT=3002
+    ports:
+      - 3002:3002
+    volumes:
+      - ./files:/app/files
+  reader:
+    image: hash-reader
+    container_name: reader
+    build:
+      context: .
+      dockerfile: Dockerfile.reader
+    environment:
+      - PORT=3001
+    ports:
+      - 3001:3001
+    volumes:
+      - ./files:/app/files

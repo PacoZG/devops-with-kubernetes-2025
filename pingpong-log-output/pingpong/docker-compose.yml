@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  pingpong:
+    image: pingpong
+    container_name: pingpong
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8000
+    ports:
+      - 8000:8000

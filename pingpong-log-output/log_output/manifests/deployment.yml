@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: log-output
+  name: log-output-dep
 spec:
   replicas: 1
   selector:
@@ -47,16 +47,3 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "500m"
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: log-output-svc
-spec:
-  selector:
-    app: log-output
-  ports:
-  - port: 30081
-    protocol: TCP
-    targetPort: 3001

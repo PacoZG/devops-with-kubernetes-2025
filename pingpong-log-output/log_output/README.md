@@ -1,13 +1,13 @@
-# Exercise 1.07: External access with Ingress
+# Exercise 1.10: Even more services
 
-### In order to make te right configuration I implemented the manifests files as follow:
+### To make te right configuration I implemented the manifests files as follows:
 
-- [deployment.yaml](../log_output/manifests/deployment.yml)
+- [deployment.yaml](./manifests/deployment.yml)
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: log-output
+  name: log-output-dep
 spec:
   replicas: 1
   selector:
@@ -18,13 +18,18 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: files
       containers:
-      - name: log-output
-        image: sirpacoder/log-output:v1.7
+      - name: hash-generator
+        image: sirpacoder/hash-generator:v1.10
         imagePullPolicy: Always
         env:
           - name: PORT
-            value: "3001"
+            value: "3002"
+        volumeMounts:
+          - name: files
+            mountPath: /app/files
         resources:
           limits:
             memory: "256Mi"
@@ -32,10 +37,25 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "500m"
-
+      - name: hash-reader
+        image: sirpacoder/hash-reader:v1.10
+        imagePullPolicy: Always
+        env:
+          - name: PORT
+            value: "3001"
+        volumeMounts:
+          - name: files
+            mountPath: /app/files
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
 ```
 ___
-- [ingress.yaml](../log-output/manifests/ingress.yaml)
+- [ingress.yaml](./manifests/ingress.yaml)
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -56,7 +76,7 @@ spec:
               number: 30081
 ```
 ___
-- [service.yaml](../project/manifests/service.yaml)
+- [service.yaml](./manifests/service.yaml)
 
 ```yaml
 apiVersion: v1
@@ -71,17 +91,19 @@ spec:
     protocol: TCP
     targetPort: 3001
 ```
-then created a new cluster using the following script
+then create a new cluster using the following script
 
 ```shell
-  k3d cluster create --port 3000:30081@agent:0 -p 8080:80@loadbalancer --agents 2
+  k3d cluster create --port 3004:30081@agent:0 -p 8080:80@loadbalancer --agents 2
 ```
 
 followed by
 ```shell
-  kubectl apply -f manifests/
+  kubectl apply -f ./manifests
 ```
 
-with that I was able to access the [http://localhost:8080/api/strings](http://localhost:8080/api/strings) port from the broswer
+The image of the hash writer can be found [here](https://hub.docker.com/repository/docker/sirpacoder/hash-generator/general)
 
-The image are available in my Docker Hub at [log-output](https://hub.docker.com/r/sirpacoder/log-output/tag)
+The image of the hash reader can be found [here](https://hub.docker.com/repository/docker/sirpacoder/hash-reader/general)
+
+with that I was able to access the [http://localhost:8080/api/strings](http://localhost:8080/api/strings) port from the browser

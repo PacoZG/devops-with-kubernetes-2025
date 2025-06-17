@@ -1,13 +1,13 @@
-# Exercise 1.07: External access with Ingress
+# Exercise 1.10: Even more services
 
-### In order to make te right configuration I implemented the manifests files as follow:
+### To make te right configuration I implemented the manifests files as follows:
 
 - [log-output.yaml](./manifests/log_output.yml)
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: log-output
+  name: log-output-dep
 spec:
   replicas: 1
   selector:
@@ -18,13 +18,34 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+        - name: files
       containers:
-      - name: log-output
-        image: sirpacoder/log-output:v1.9
+      - name: hash-generator
+        image: sirpacoder/hash-generator:v1.10
+        imagePullPolicy: Always
+        env:
+          - name: PORT
+            value: "3002"
+        volumeMounts:
+          - name: files
+            mountPath: /app/files
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+      - name: hash-reader
+        image: sirpacoder/hash-reader:v1.10
         imagePullPolicy: Always
         env:
           - name: PORT
             value: "3001"
+        volumeMounts:
+          - name: files
+            mountPath: /app/files
         resources:
           limits:
             memory: "256Mi"
@@ -45,8 +66,6 @@ spec:
   - port: 30081
     protocol: TCP
     targetPort: 3001
-
-
 ```
 ___
 - [ingress.yaml](../log-output/manifests/ingress.yaml)

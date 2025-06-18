@@ -1,9 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: log-output
+  name: pingpong-log-output-ingress
   labels:
-    name: log-output
+    name: pingpong-log-output
 spec:
   rules:
   - http:

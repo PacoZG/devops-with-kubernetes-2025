@@ -5,47 +5,44 @@ import cors from 'cors'
 import http from 'http'
 import fs from 'fs/promises'
 
-const filePath = process.env.FILE_PATH || 'files/hash.txt'
+const filePath = process.env.HASH_FILE_PATH
 let date_hash
 
-const stringGen = () => {
+const stringGen = async () => {
   const newString = v4()
   const newDate = new Date()
   date_hash = [newDate.toISOString(), newString].join(': ')
-  console.log('[GENERATED_HASH]', date_hash)
+
   try {
-    void fs.writeFile(filePath, date_hash)
+    await fs.writeFile(filePath, date_hash)
   } catch (error) {
-    console.log({ error: error.message })
+    console.error('[ERROR]: ', error.message)
   }
   setTimeout(stringGen, 5000)
-
-  return date_hash
 }
 
-stringGen()
+void stringGen()
 
-const stringRouter = Router()
+const hashGeneratorRouter = Router()
 
-stringRouter.get('/', (req, res) => {
-  console.log('GET request to /api/strings done successfully')
+hashGeneratorRouter.get('/api/strings', (req, res) => {
+  console.log('[GENERATOR]: GET request to /api/strings done successfully')
 
-  res.status(200).json({ GENERATED_STRING: stringGen() })
+  res.status(200).json({ GENERATED_STRING: date_hash })
+})
+
+hashGeneratorRouter.get('/health', (req, res) => {
+  res.status(200).json({ message: 'ok' })
 })
 
 const hashGeneratorApp = express()
 
 hashGeneratorApp.use(cors())
+hashGeneratorApp.use('/', hashGeneratorRouter)
 
-hashGeneratorApp.use('/api/strings', stringRouter)
-
-hashGeneratorApp.get('/health', (req, res) => {
-  res.status(200).json({ message: 'ok' })
-})
-
-const PORT = process.env.PORT || 3002
+const PORT = process.env.GENERATOR_PORT
 const server = http.createServer(hashGeneratorApp)
 
 server.listen(PORT, () => {
-  console.log(`Server started in port ${PORT}`)
+  console.log(`Generator server started in port ${PORT}`)
 })

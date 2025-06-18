@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      volumes:
+        - name: shared-files
+          persistentVolumeClaim:
+            claimName: files-claim
+      containers:
+      - name: pingpong
+        image: sirpacoder/pingpong:v1.11
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: shared-files
+            mountPath: /usr/src/app/shared/files
+        env:
+          - name: PORT
+            value: "8000"
+          - name: HASH_FILE_PATH
+            value: "shared/files/hash.txt"
+          - name: COUNT_FILE_PATH
+            value: "shared/files/count.txt"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingpong-svc
+spec:
+  selector:
+    app: pingpong
+  ports:
+  - port: 30081
+    protocol: TCP
+    targetPort: 8000

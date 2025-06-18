@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      volumes:
+        - name: shared-files
+          persistentVolumeClaim:
+            claimName: files-claim
+      containers:
+      - name: hash-generator
+        image: sirpacoder/hash-generator:v1.11
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: shared-files
+            mountPath: /usr/src/app/shared/files
+        env:
+          - name: GENERATOR_PORT
+            value: "3002"
+          - name: HASH_FILE_PATH
+            value: "/usr/src/app/shared/files/hash.txt"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+      - name: hash-reader
+        image: sirpacoder/hash-reader:v1.11
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: shared-files
+            mountPath: /usr/src/app/shared/files
+        env:
+          - name: READER_PORT
+            value: "3001"
+          - name: HASH_FILE_PATH
+            value: "/usr/src/app/shared/files/hash.txt"
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: log-output-svc
+spec:
+  selector:
+    app: log-output
+  ports:
+  - port: 30081
+    protocol: TCP
+    targetPort: 3001

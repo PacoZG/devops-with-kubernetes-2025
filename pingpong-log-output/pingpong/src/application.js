@@ -8,8 +8,4 @@ application.use(cors())
 
 application.use('/pingpong', pingPongRouter)
 
-application.get('/health', (req, res) => {
-  res.status(200).json({ message: 'ok' })
-})
-
 export default application

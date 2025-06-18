@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  writer:
+    image: hash-generator
+    container_name: writer
+    build:
+      context: ./log_output
+      dockerfile: Dockerfile.generator
+    environment:
+      - GENERATOR_PORT=3002
+      - HASH_FILE_PATH=shared/files/hash.txt
+    ports:
+      - 3002:3002
+    volumes:
+      - ./shared/files:/usr/src/app/shared/files
+  reader:
+    image: hash-reader
+    container_name: reader
+    build:
+      context: ./log_output
+      dockerfile: Dockerfile.reader
+    environment:
+      - READER_PORT=3001
+      - HASH_FILE_PATH=shared/files/hash.txt
+    ports:
+      - 3001:3001
+    volumes:
+      - ./shared/files:/usr/src/app/shared/files
+  pingpong:
+    image: pingpong
+    container_name: pingpong
+    build:
+      context: ./pingpong
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8000
+      - HASH_FILE_PATH=shared/files/hash.txt
+      - COUNT_FILE_PATH=shared/files/count.txt
+    ports:
+      - 8000:8000
+    volumes:
+      - ./shared/files:/usr/src/app/shared/files
+

@@ -5,15 +5,20 @@ export const useTodos = () => {
   return useQuery({ queryKey: ['todos'], queryFn: getAllTodos })
 }
 
-// Not in use yet
-//TODO: Will be enabled in a future exercise
+const createNewTodo = async todo => {
+  return createTodo(todo)
+}
+
 export const useCreateTodo = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: createTodo,
+    mutationFn: createNewTodo,
     onSuccess: () => {
       void queryClient.invalidateQueries(['todos']) // Refetch todos
+    },
+    onError: () => {
+      console.log('something went wrong')
     },
   })
 }

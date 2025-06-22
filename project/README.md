@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: client
-        image: sirpacoder/client:v1.12
+        image: sirpacoder/client:v1.13
         imagePullPolicy: Always
         env:
           - name: REACT_APP_SERVER_URL
@@ -71,7 +71,7 @@ spec:
             claimName: project-files-claim
       containers:
       - name: server
-        image: sirpacoder/server:v1.12
+        image: sirpacoder/server:v1.13
         imagePullPolicy: Always
         env:
           - name: PORT

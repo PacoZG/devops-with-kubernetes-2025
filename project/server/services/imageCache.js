@@ -5,7 +5,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 const imageFilePath = process.env.IMAGE_FILE_PATH;
-const timestampFilePath = process.env.TIMESTAMP_FILE_PATH; // Use a separate env var for timestamp
+const timestampFilePath = process.env.TIMESTAMP_FILE_PATH;
 const TEN_MINUTES = 10 * 60 * 1000;
 
 const ensureDirExists = (filePath) => {
@@ -20,7 +20,7 @@ const getLastFetchTimestamp = () => {
     const ts = fs.readFileSync(timestampFilePath, 'utf-8');
     return dayjs(ts);
   }
-  return dayjs().add(11, 'minutes');
+  return null;
 };
 
 const setLastFetchTimestamp = (timestamp) => {
@@ -34,7 +34,7 @@ const imageCache = async () => {
 
   const now = dayjs();
   const lastFetchTimestamp = getLastFetchTimestamp();
-  const millisecondsSinceLastFetch = lastFetchTimestamp.diff(now)
+  const millisecondsSinceLastFetch = lastFetchTimestamp ? now.diff(lastFetchTimestamp) : Infinity;
 
   if (!lastFetchTimestamp || millisecondsSinceLastFetch > TEN_MINUTES || !fs.existsSync(imageFilePath)) {
     const writer = fs.createWriteStream(imageFilePath);

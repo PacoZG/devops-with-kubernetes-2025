@@ -1,10 +1,11 @@
-require('dotenv').config()
-const app = require('./app')
-const config = require('./utils/config')
-const http = require('http')
+import 'dotenv/config';
+import http from 'http';
+import app from './app.js';
+
+const PORT = process.env.PORT
 
 const server = http.createServer(app)
 
-server.listen(config.PORT, () => {
-  console.log(`Server started in port ${config.PORT}`)
+server.listen(PORT, () => {
+  console.log(`Server started in port ${PORT}`)
 })

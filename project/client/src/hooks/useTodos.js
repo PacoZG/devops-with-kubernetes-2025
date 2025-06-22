@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAllTodos, createTodo } from '../services/todos'
+import { getAllTodos, createTodo } from '../services/handleTodos'
 
 export const useTodos = () => {
   return useQuery({ queryKey: ['todos'], queryFn: getAllTodos })

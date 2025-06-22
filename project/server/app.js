@@ -1,16 +1,17 @@
-const express = require('express')
-const cors = require('cors')
+import express from 'express';
+import cors from 'cors';
+import todoappRouter from './controllers/todo.js';
+import imageRouter from './controllers/image.js';
 
 const app = express()
-
-const todoappRouter = require('./controllers/todoapp')
 
 app.use(cors())
 
 app.use('/api/todos', todoappRouter)
+app.use('/api/image', imageRouter)
 
 app.get('/health', (req, res) => {
   res.json({ message: 'ok' })
 })
 
-module.exports = app
+export default app

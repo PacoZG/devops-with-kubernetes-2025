@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-dep
+spec:
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: sirpacoder/client:v1.12
+        imagePullPolicy: Always
+        env:
+          - name: REACT_APP_SERVER_URL
+            value: http://localhost:8081
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: client
+  ports:
+  - port: 30081
+    protocol: TCP
+    targetPort: 3000

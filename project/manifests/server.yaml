@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      volumes:
+        - name: shared-files
+          persistentVolumeClaim:
+            claimName: project-files-claim
+      containers:
+      - name: server
+        image: sirpacoder/server:v1.12
+        imagePullPolicy: Always
+        env:
+          - name: PORT
+            value: "3001"
+          - name: IMAGE_FILE_PATH
+            value: "files/image.jpg"
+          - name: TIMESTAMP_FILE_PATH
+            value: "files/timestamp.txt"
+        volumeMounts:
+          - name: shared-files
+            mountPath: /usr/src/app/files
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: server
+  ports:
+  - port: 30081
+    protocol: TCP
+    targetPort: 3001

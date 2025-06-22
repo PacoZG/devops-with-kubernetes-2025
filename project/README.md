@@ -147,7 +147,7 @@ The cluster is created running the following command in the terminal
   k3d cluster create --port 4000:30081@agent:0 -p 8081:80@loadbalancer --agents 2
 ```
 
-Before creating the storade we ake sure we make sure tu run
+Before creating the storage, we make sure tu run
 ```shell
   docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
 ```
@@ -156,12 +156,14 @@ Then we deploy our storage
   kubectl apply -f volumes
 ```
 
-Followed bby the micro services, client and server 
+Follow by the microservices, client and server 
 ```shell
   kubectl apply -f manifests
 ```
 
-After that we can open our client (frontend) in [http://localhost:8081](http://localhost:8081) port from the browser
+After that,
+we can open our client (frontend)
+in [http://localhost:8081](http://localhost:8081) port from the browser
 
 Where we can also se the response from the server in [http://localhost:8081/api/todos](http://localhost:8081/api/todos) and [http://localhost:8081/api/image](http://localhost:8081/api/image)
 

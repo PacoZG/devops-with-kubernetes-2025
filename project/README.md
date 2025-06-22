@@ -1,4 +1,4 @@
-# Exercise 1.12. The project, step 6
+# Exercise 1.13. The project, step 7
 
 ### The exercise has been completed following the instructions, where the client is running on http://localhost:8081 and the backend has exposed api endpoint in the same baseurl with endpoint /api/todos and api/image
 

@@ -161,7 +161,7 @@ Followed bby the micro services, client and server
   kubectl apply -f manifests
 ```
 
-After that we can open our client (frontend) in [http://localhost:8081](http://localhost:8080) port from the browser
+After that we can open our client (frontend) in [http://localhost:8081](http://localhost:8081) port from the browser
 
 Where we can also se the response from the server in [http://localhost:8081/api/todos](http://localhost:8081/api/todos) and [http://localhost:8081/api/image](http://localhost:8081/api/image)
 

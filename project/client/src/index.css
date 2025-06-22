@@ -49,7 +49,7 @@ code {
     padding: 20px;
     border-style: solid;
     border-radius: 5px;
-    margin: 0px;
+    margin: 0;
 }
 
 .TodoList__header {
@@ -84,13 +84,13 @@ code {
 .text {
     font-size: 20px;
     font-weight: 700;
-    margin: 0px;
+    margin: 0;
     padding-bottom: 5px;
 }
 
 .status {
     font-size: 20px;
-    margin: 0px;
+    margin: 0;
     font-weight: 700;
 }
 

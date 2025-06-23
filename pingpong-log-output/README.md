@@ -1,6 +1,6 @@
-# Exercise 1.11: Persisting data
+# Exercise 2.1. Connecting pods
 
-### To make te right configuration, I implemented the manifests files as follows:
+### To make the right configuration, I implemented the manifests files as follows:
 
 - [log_output.yaml](manifests/log_output.yaml)
 ```yaml
@@ -21,10 +21,10 @@ spec:
       volumes:
         - name: shared-files
           persistentVolumeClaim:
-            claimName: files-claim
+            claimName: pingpong-files-claim
       containers:
       - name: hash-generator
-        image: sirpacoder/hash-generator:v1.11
+        image: sirpacoder/hash-generator:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -42,7 +42,7 @@ spec:
             memory: "256Mi"
             cpu: "500m"
       - name: hash-reader
-        image: sirpacoder/hash-reader:v1.11
+        image: sirpacoder/hash-reader:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -52,6 +52,8 @@ spec:
             value: "3001"
           - name: HASH_FILE_PATH
             value: "/usr/src/app/shared/files/hash.txt"
+          - name: PING_SERVER_URL
+            value: http://pingpong-svc:30081
         resources:
           limits:
             memory: "256Mi"
@@ -94,10 +96,10 @@ spec:
       volumes:
         - name: shared-files
           persistentVolumeClaim:
-            claimName: files-claim
+            claimName: pingpong-files-claim
       containers:
       - name: pingpong
-        image: sirpacoder/pingpong:v1.11
+        image: sirpacoder/pingpong:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -105,19 +107,17 @@ spec:
         env:
           - name: PORT
             value: "8000"
-          - name: HASH_FILE_PATH
-            value: "shared/files/hash.txt"
           - name: COUNT_FILE_PATH
             value: "shared/files/count.txt"
         resources:
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
           requests:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "500m"
-
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -136,21 +136,28 @@ ___
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: log-output
+  name: pingpong-log-output-ingress
   labels:
-    name: log-output
+    name: pingpong-log-output
 spec:
   rules:
   - http:
       paths:
-      - path: "/"
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: log-output-svc
             port:
               number: 30081
-      - path: "/pingpong"
+      - path: /pingpong
+        pathType: Prefix
+        backend:
+          service:
+            name: pingpong-svc
+            port:
+              number: 30081
+      - path: /pings
         pathType: Prefix
         backend:
           service:
@@ -166,15 +173,17 @@ Before running the script to build the pods, it was necessary to run:
 ```shell
   docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
 ```
+
 then,
 ```shell
-  k3d cluster create --port 3004:30081@agent:0 -p 8080:80@loadbalancer --agents 2
+  k3d cluster create --port 4000:30081@agent:0 -p 8081:80@loadbalancer --agents 2
 ```
 
 Create the volumes
 ```shell
   kubectl apply -f volumes
 ```
+
 Apply manifests
 ```shell
   kubectl apply -f manifests
@@ -193,6 +202,7 @@ The image of the pingpong can be found [here](https://hub.docker.com/repository/
 
 With that,
 I was able
-to access the [http://localhost:8080/api/strings](http://localhost:8080/api/strings)
-to see hash and the [http://localhost:8080/pingpong](http://localhost:8080/pingpong),
-to see hash on the browser and the number of requests made
+to access to see hash on the browser and the number of requests made. [http://localhost:8081](http://localhost:8081)
+to see the number of pings [http://localhost:8081/pings](http://localhost:8081/pings),
+to increment the number of pings [http://localhost:8081/pingpong](http://localhost:8081/pingpong),
+

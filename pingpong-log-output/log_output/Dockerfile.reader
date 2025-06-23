@@ -4,8 +4,8 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci
+COPY ./src/reader ./reader
 
-COPY ./src/hashReaderApp.js ./
+RUN npm ci
 
 CMD ["npm", "run", "reader"]

@@ -8,14 +8,21 @@ spec:
   rules:
   - http:
       paths:
-      - path: "/"
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: log-output-svc
             port:
               number: 30081
-      - path: "/pingpong"
+      - path: /pingpong
+        pathType: Prefix
+        backend:
+          service:
+            name: pingpong-svc
+            port:
+              number: 30081
+      - path: /pings
         pathType: Prefix
         backend:
           service:

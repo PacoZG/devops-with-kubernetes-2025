@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: files-claim
+  name: pingpong-files-claim
 spec:
   storageClassName: manual
   accessModes:

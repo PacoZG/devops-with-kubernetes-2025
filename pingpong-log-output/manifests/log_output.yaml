@@ -15,10 +15,10 @@ spec:
       volumes:
         - name: shared-files
           persistentVolumeClaim:
-            claimName: files-claim
+            claimName: pingpong-files-claim
       containers:
       - name: hash-generator
-        image: sirpacoder/hash-generator:v1.11
+        image: sirpacoder/hash-generator:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -36,7 +36,7 @@ spec:
             memory: "256Mi"
             cpu: "500m"
       - name: hash-reader
-        image: sirpacoder/hash-reader:v1.11
+        image: sirpacoder/hash-reader:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -46,6 +46,8 @@ spec:
             value: "3001"
           - name: HASH_FILE_PATH
             value: "/usr/src/app/shared/files/hash.txt"
+          - name: PING_SERVER_URL
+            value: http://pingpong-svc:30081
         resources:
           limits:
             memory: "256Mi"

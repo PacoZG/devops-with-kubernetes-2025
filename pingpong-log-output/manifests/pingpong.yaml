@@ -15,10 +15,10 @@ spec:
       volumes:
         - name: shared-files
           persistentVolumeClaim:
-            claimName: files-claim
+            claimName: pingpong-files-claim
       containers:
       - name: pingpong
-        image: sirpacoder/pingpong:v1.11
+        image: sirpacoder/pingpong:v2.1
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -26,19 +26,17 @@ spec:
         env:
           - name: PORT
             value: "8000"
-          - name: HASH_FILE_PATH
-            value: "shared/files/hash.txt"
           - name: COUNT_FILE_PATH
             value: "shared/files/count.txt"
         resources:
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
           requests:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "500m"
-
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
 ---
+
 apiVersion: v1
 kind: Service
 metadata:

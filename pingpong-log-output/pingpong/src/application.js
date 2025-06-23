@@ -5,7 +5,8 @@ import pingPongRouter from './controller/pingPongRouter.js'
 const application = express()
 
 application.use(cors())
+application.use(express.json())
 
-application.use('/pingpong', pingPongRouter)
+application.use('/', pingPongRouter)
 
 export default application

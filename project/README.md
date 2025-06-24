@@ -1,10 +1,14 @@
 # Exercise 2.2. The project, step 8
 
-### The Flow of my application is a bit different to what it is asked in the diagram, my backend takes care of all business actions,
-### like get the image from https://picsum.photos/1200 to save it into the PV, get a new one every 10 minutes and make available for the frontend through the /api/image endpoint.
-### Here is the link to the diagram: [App flow](https://drive.google.com/file/d/1DfkimOxZQIpy4aJvprj26Fg5YzsmBuwu/view?usp=drive_link)
+### The main intention of this exercise is to create a namespace called _project_ which will contain the PV, pods, services and ingress config that will allow run the _project_ applications 
 
-#### The following are the manifest configurations
+- [namespace.yaml](namespace/namespace.yaml)
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: project 
+```
 
 - [client.yaml](./manifests/client.yaml)
 ```yaml
@@ -12,6 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: client-dep
+  namespace: project
 spec:
   selector:
     matchLabels:
@@ -41,6 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: client-svc
+  namespace: project
 spec:
   type: ClusterIP
   selector:
@@ -57,6 +63,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: server-dep
+  namespace: project
 spec:
   replicas: 1
   selector:
@@ -99,6 +106,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: server-svc
+  namespace: project
 spec:
   type: ClusterIP
   selector:
@@ -115,6 +123,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: project
+  namespace: project
   labels:
     name: project
 spec:
@@ -153,6 +162,12 @@ Before creating the storage, we make sure tu run
 ```shell
   docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
 ```
+
+Before creating volumes, pods, services and ingress we create the designated namespace by running
+```shell
+  kubectl apply -f namespace
+```
+
 Then we deploy our storage
 ```shell
   kubectl apply -f volumes

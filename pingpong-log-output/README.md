@@ -1,6 +1,16 @@
-# Exercise 2.1. Connecting pods
+# Exercise 2.3. Keep them separated
 
 ### To make the right configuration, I implemented the manifests files as follows:
+
+### The main intention of this exercise is to create a namespace called _exercises_ which will contain the PV and the pods that will run the _log_output_applications 
+
+- [namespace.yaml](namespace/namespace.yaml)
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: exercises 
+```
 
 - [log_output.yaml](manifests/log_output.yaml)
 ```yaml
@@ -8,6 +18,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: log-output
+  namespace: exercises
 spec:
   replicas: 1
   selector:
@@ -83,6 +94,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pingpong
+  namespace: exercises
 spec:
   replicas: 1
   selector:
@@ -122,6 +134,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pingpong-svc
+  namespace: exercises
 spec:
   selector:
     app: pingpong
@@ -137,6 +150,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pingpong-log-output-ingress
+  namespace: exercises
   labels:
     name: pingpong-log-output
 spec:
@@ -179,19 +193,19 @@ then,
   k3d cluster create --port 4000:30081@agent:0 -p 8081:80@loadbalancer --agents 2
 ```
 
-Create the volumes
+Before creating volumes, pods, services and ingress we create the designated namespace by running
+```shell
+  kubectl apply -f namespace
+```
+
+Then, create the volumes
 ```shell
   kubectl apply -f volumes
 ```
 
-Apply manifests
+ and finally, apply manifests
 ```shell
   kubectl apply -f manifests
-```
-
-Then we can delete the workloads by running
-```shell
-  kubectl delete -f manifests
 ```
 
 The image of the hash writer can be found [here](https://hub.docker.com/repository/docker/sirpacoder/hash-generator/general)

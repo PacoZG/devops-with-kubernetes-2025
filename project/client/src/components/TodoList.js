@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCreateTodo, useTodos } from '../hooks/useTodos'
 import { capitalize } from 'lodash'
-import { baseUrl } from '../utils/config.js'
+import { serverBaseUrl } from '../utils/config.js'
 
 const TodoList = () => {
   const { data: todos = [], isLoading, isError } = useTodos()
@@ -26,7 +26,7 @@ const TodoList = () => {
       <header className="TodoList__header">The Project App</header>
 
       <img
-        src={`${baseUrl}/api/image`}
+        src={`${serverBaseUrl}/api/image`}
         alt="Random image"
         style={{ width: '50rem', height: '50rem', marginBottom: '10px' }}
       />
@@ -48,7 +48,12 @@ const TodoList = () => {
             }}
           />
 
-          <label style={{ padding: '10px' }}>{`${text.length}/140 Characters Allowed`}</label>
+          <label
+            style={{
+              padding: '10px',
+              color: text.length < 110 ? 'green' : text.length >= 135 ? 'red' : 'yellow',
+            }}
+          >{`${text.length}/140 Characters allowed`}</label>
         </div>
 
         <button className={'create-button'} onClick={handleSubmit}>

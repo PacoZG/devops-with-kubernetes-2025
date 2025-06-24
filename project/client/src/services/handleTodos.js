@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { baseUrl } from '../utils/config.js'
+import { serverBaseUrl } from '../utils/config.js'
 
 const getAllTodos = async () => {
   const response = await axios({
     method: 'GET',
-    url: `${baseUrl}/api/todos`,
+    url: `${serverBaseUrl}/api/todos`,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -13,7 +13,7 @@ const getAllTodos = async () => {
 }
 
 const createTodo = async todo => {
-  const response = await axios.post(`${baseUrl}/api/todos`, todo)
+  const response = await axios.post(`${serverBaseUrl}/api/todos`, todo)
   return response.data
 }
 

@@ -45,6 +45,7 @@ spec:
   selector:
     app: pingpong
   ports:
-  - port: 30081
+  - name: http
+    port: 30081
     protocol: TCP
     targetPort: 8000

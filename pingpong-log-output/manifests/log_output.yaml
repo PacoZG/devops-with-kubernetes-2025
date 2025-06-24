@@ -65,6 +65,7 @@ spec:
   selector:
     app: log-output
   ports:
-  - port: 30081
+  - name: http
+    port: 30081
     protocol: TCP
     targetPort: 3001

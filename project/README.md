@@ -1,6 +1,8 @@
-# Exercise 1.13. The project, step 7
+# Exercise 2.2. The project, step 8
 
-### The exercise has been completed following the instructions, where the client is running on http://localhost:8081 and the backend has exposed api endpoint in the same baseurl with endpoint /api/todos and api/image
+### The Flow of my application is a bit different to what it is asked in the diagram, my backend takes care of all business actions,
+### like get the image from https://picsum.photos/1200 to save it into the PV, get a new one every 10 minutes and make available for the frontend through the /api/image endpoint.
+### Here is the link to the diagram: [App flow](https://drive.google.com/file/d/1DfkimOxZQIpy4aJvprj26Fg5YzsmBuwu/view?usp=drive_link)
 
 #### The following are the manifest configurations
 

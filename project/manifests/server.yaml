@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: server-dep
+  namespace: project
 spec:
   replicas: 1
   selector:
@@ -18,7 +19,7 @@ spec:
             claimName: project-files-claim
       containers:
       - name: server
-        image: sirpacoder/server:v1.13
+        image: sirpacoder/server:v2.4
         imagePullPolicy: Always
         env:
           - name: PORT
@@ -44,6 +45,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: server-svc
+  namespace: project
 spec:
   type: ClusterIP
   selector:

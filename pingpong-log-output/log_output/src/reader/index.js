@@ -1,7 +1,6 @@
 import http from 'http'
 import hashReaderApp from './apps/hashReaderApp.js'
-
-const READER_PORT = process.env.READER_PORT
+import { READER_PORT } from './utils/appConfig.js'
 
 const readerServer = http.createServer(hashReaderApp)
 

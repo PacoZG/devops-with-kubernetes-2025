@@ -1,7 +1,6 @@
-# Exercise 2.2. The project, step 8
+# Exercise 2.6. The project, step 10
 
-### The main intention of this exercise is to create a namespace called _project_ which will contain the PV, pods, services and ingress config that will allow run the _project_ applications 
-
+### Make sure that your project has no hard coded ports, URL or other configurations in the source code. Pass all the configurations to pods as env variables that are defined either in a config map or in deployments.
 - [namespace.yaml](namespace/namespace.yaml)
 ```yaml
 apiVersion: v1
@@ -183,5 +182,3 @@ we can open our client (frontend)
 in [http://localhost:8081](http://localhost:8081) port from the browser
 
 Where we can also se the response from the server in [http://localhost:8081/api/todos](http://localhost:8081/api/todos) and [http://localhost:8081/api/image](http://localhost:8081/api/image)
-
-

@@ -3,6 +3,8 @@ import fs from 'fs/promises'
 import { HASH_FILE_PATH } from '../utils/appConfig.js'
 
 const getHash = async () => {
+  let date_hash
+
   try {
     date_hash = await fs.readFile(HASH_FILE_PATH, { encoding: 'utf8' })
   } catch (error) {

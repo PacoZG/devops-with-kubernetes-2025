@@ -1,5 +1,4 @@
 /.idea/
 /**/node_modules/
 /**/shared/
-/pingpong-log-output/log_output/.env
-**/.env
+/**/.env

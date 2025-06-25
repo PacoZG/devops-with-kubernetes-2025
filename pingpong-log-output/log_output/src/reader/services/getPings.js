@@ -1,32 +1,31 @@
 import axios from 'axios'
+import { PING_SERVER_URL } from '../utils/appConfig.js'
 
 const getPings = async () => {
-  const pingServerUrl = process.env.PING_SERVER_URL
-  if (!pingServerUrl) throw new Error('PING_SERVER_URL is not set')
+  if (!PING_SERVER_URL) throw new Error('PING_SERVER_URL is not set')
 
-  console.log(`[READER]: Pingpong baseUrl ${pingServerUrl}`)
+  console.debug(`[READER]: Pingpong baseUrl ${PING_SERVER_URL}`)
 
   try {
     const response = await axios({
       method: 'GET',
-      url: `${pingServerUrl}/pings`,
+      url: `${PING_SERVER_URL}/pings`,
       headers: {
         'Content-Type': 'application/json',
       },
     })
-    console.log('RESPONSE: ', response)
 
     if (response.status !== 200) {
-      console.log('RESPONSE: ', response)
-      throw new Error(`[READER]: HTTP error! status: ${response.status}`)
+      console.info('RESPONSE: ', response)
+      console.error(`[READER]: HTTP error! status: ${response.status}`)
     }
-    console.log('RESPONSE DATA: ', response.data)
+
+    console.info('RESPONSE DATA: ', response.data)
     const { pongs } = response.data
 
     return pongs
   } catch (error) {
-    console.error('[READER]: Fetch failed ', error.message)
-    throw error
+    throw new Error(`[READER]: ${error.errors}`)
   }
 }
 

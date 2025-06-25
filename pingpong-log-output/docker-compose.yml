@@ -24,6 +24,8 @@ services:
       - HASH_FILE_PATH=shared/files/hash.txt
       - PING_SERVER_URL=http://pingpong:8000
       - READER_PORT=3001
+      - MESSAGE=hello world
+      - INFORMATION_FILE_PATH=shared/files/information.txt
     ports:
       - 3001:3001
     volumes:

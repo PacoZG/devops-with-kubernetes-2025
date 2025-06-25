@@ -11,7 +11,7 @@ metadata:
 ```
 
 - [configMap.yaml](manifests/configMap.yaml)
-```shell
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:

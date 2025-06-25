@@ -1,8 +1,6 @@
-# Exercise 2.3. Keep them separated
+# Exercise 2.5. Documentation and ConfigMaps
 
-### To make the right configuration, I implemented the manifests files as follows:
-
-### The main intention of this exercise is to create a namespace called _exercises_ which will contain the PV and the pods that will run the _log_output_applications 
+### Setting environment variables and secrets using ConfigMap
 
 - [namespace.yaml](namespace/namespace.yaml)
 ```yaml
@@ -10,6 +8,20 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: exercises 
+```
+
+- [configMap.yaml](manifests/configMap.yaml)
+```shell
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: log-output-config
+  namespace: exercises
+data:
+  information.txt: |
+    this is from file
+  MESSAGE: "hello world"
+
 ```
 
 - [log_output.yaml](manifests/log_output.yaml)
@@ -33,9 +45,15 @@ spec:
         - name: shared-files
           persistentVolumeClaim:
             claimName: pingpong-files-claim
+        - name: reader-files
+          configMap:
+            name: log-output-config
+            items:
+              - key: information.txt
+                path: information.txt
       containers:
       - name: hash-generator
-        image: sirpacoder/hash-generator:v2.1
+        image: sirpacoder/hash-generator:v2.5
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -53,18 +71,27 @@ spec:
             memory: "256Mi"
             cpu: "500m"
       - name: hash-reader
-        image: sirpacoder/hash-reader:v2.1
+        image: sirpacoder/hash-reader:v2.5
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
             mountPath: /usr/src/app/shared/files
+          - name: reader-files
+            mountPath: /usr/src/app/reader/info
         env:
           - name: READER_PORT
             value: "3001"
           - name: HASH_FILE_PATH
             value: "/usr/src/app/shared/files/hash.txt"
+          - name: INFORMATION_FILE_PATH
+            value: /usr/src/app/reader/info/information.txt
           - name: PING_SERVER_URL
             value: http://pingpong-svc:30081
+          - name: MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: log-output-config
+                key: MESSAGE
         resources:
           limits:
             memory: "256Mi"
@@ -78,17 +105,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: log-output-svc
+  namespace: exercises
 spec:
   selector:
     app: log-output
   ports:
-  - port: 30081
+  - name: http
+    port: 30081
     protocol: TCP
     targetPort: 3001
 ```
 ___
 - [pingpong.yaml](manifests/pingpong.yaml)
-
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -111,7 +139,7 @@ spec:
             claimName: pingpong-files-claim
       containers:
       - name: pingpong
-        image: sirpacoder/pingpong:v2.1
+        image: sirpacoder/pingpong:v2.5
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -139,7 +167,8 @@ spec:
   selector:
     app: pingpong
   ports:
-  - port: 30081
+  - name: http
+    port: 30081
     protocol: TCP
     targetPort: 8000
 ```

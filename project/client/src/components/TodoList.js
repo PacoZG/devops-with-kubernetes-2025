@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useCreateTodo, useTodos } from '../hooks/useTodos'
 import { capitalize } from 'lodash'
-import { v4 as uuidv4 } from 'uuid'
 import { serverBaseUrl } from '../utils/config.js'
 
 const TodoList = () => {
@@ -21,7 +20,10 @@ const TodoList = () => {
       window.alert('Test is too short!')
       return
     }
-    const newTodo = { text: text, status: 'not-done' }
+    const newTodo = {
+      text: text,
+      status: 'not-done',
+    }
     void createTodoMutation.mutate(newTodo)
     setText('')
   }

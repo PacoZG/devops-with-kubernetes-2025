@@ -18,27 +18,37 @@ spec:
           persistentVolumeClaim:
             claimName: project-files-claim
       containers:
-      - name: server
-        image: sirpacoder/server:v2.4
-        imagePullPolicy: Always
-        env:
-          - name: PORT
-            value: "3001"
-          - name: IMAGE_FILE_PATH
-            value: "files/image.jpg"
-          - name: TIMESTAMP_FILE_PATH
-            value: "files/timestamp.txt"
-        volumeMounts:
-          - name: shared-files
-            mountPath: /usr/src/app/files
-        resources:
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-          requests:
-            memory: "256Mi"
-            cpu: "500m"
-
+        - name: server
+          image: sirpacoder/server:v2.7
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "3001"
+            - name: IMAGE_FILE_PATH
+              value: "files/image.jpg"
+            - name: TIMESTAMP_FILE_PATH
+              value: "files/timestamp.txt"
+            - name: POSTGRES_HOST
+              value: postgres-svc
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: project-secret
+                  key: postgres-password
+          volumeMounts:
+            - name: shared-files
+              mountPath: /usr/src/app/files
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
 ---
 
 apiVersion: v1
@@ -51,6 +61,6 @@ spec:
   selector:
     app: server
   ports:
-  - port: 30081
-    protocol: TCP
-    targetPort: 3001
+    - port: 30081
+      protocol: TCP
+      targetPort: 3001

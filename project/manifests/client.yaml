@@ -13,19 +13,19 @@ spec:
         app: client
     spec:
       containers:
-      - name: client
-        image: sirpacoder/client:v2.4
-        imagePullPolicy: Always
-        env:
-          - name: REACT_APP_SERVER_URL
-            value: http://localhost:8081
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
+        - name: client
+          image: sirpacoder/client:v2.7
+          imagePullPolicy: Always
+          env:
+            - name: REACT_APP_SERVER_URL
+              value: http://localhost:8081
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
 ---
 
 apiVersion: v1
@@ -38,6 +38,6 @@ spec:
   selector:
     app: client
   ports:
-  - port: 30081
-    protocol: TCP
-    targetPort: 3000
+    - port: 30081
+      protocol: TCP
+      targetPort: 3000

@@ -19,7 +19,7 @@ spec:
             claimName: pingpong-files-claim
       containers:
       - name: pingpong
-        image: sirpacoder/pingpong:v2.5
+        image: sirpacoder/pingpong:v2.7
         imagePullPolicy: Always
         volumeMounts:
           - name: shared-files
@@ -29,6 +29,17 @@ spec:
             value: "8000"
           - name: COUNT_FILE_PATH
             value: "shared/files/count.txt"
+          - name: POSTGRES_HOST
+            value: postgres-svc
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_DB
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pingpong-secret
+                key: postgres-password #In secrets.yaml
         resources:
           requests:
             memory: "512Mi"

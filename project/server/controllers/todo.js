@@ -1,24 +1,31 @@
-import { Router } from 'express';
-import shortUUID from 'short-uuid';
+import { Router } from 'express'
+import getAllTodos from '../db/getAllTodos.js'
+import storeTodo from '../db/storeTodo.js'
+import getTodo from '../db/getTodo.js'
+import { v4 as uuidv4 } from 'uuid'
 
 const todoappRouter = Router()
 
-const todos = [
-  { id: 'oJXTRfsdeFEfGTCSaFBoP4', text: 'I need to clean the house', status: 'not-done' },
-  { id: 'eweWdtHpeiUrwo4sdfGWeg', text: 'Another to do', status: 'done' },
-]
-
-todoappRouter.get('/', (req, res) => {
+todoappRouter.get('/', async (req, res) => {
   console.log('GET request to /api/todos done successfully')
+  const todos = await getAllTodos()
+
   res.status(201).json(todos)
+})
+
+todoappRouter.get('/:id', async (req, res) => {
+  console.log('GET request to /api/todos done successfully')
+  const { id } = req.params
+  const todo = await getTodo(id)
+
+  res.status(201).json(todo)
 })
 
 todoappRouter.post('/', async (req, res) => {
   console.log('POST request to /api/todos done successfully')
   const { body } = req
-  const newTodo = {id: shortUUID().generate(), ...body}
-
-  todos.push(newTodo)
+  const newTodo = { id: uuidv4(), ...body }
+  const todos = await storeTodo(newTodo)
 
   res.status(201).json(todos)
 })

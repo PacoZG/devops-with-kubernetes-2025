@@ -1,7 +1,8 @@
 import 'dotenv/config'
 import http from 'http'
 import application from './application.js'
-const PORT = process.env.PORT
+import { initDb } from './dbInit/initDb.js'
+import { PORT } from './utils/appConfig.js'
 
 const server = http.createServer(application)
 

@@ -5,12 +5,10 @@ import setCounter from '../hooks/setCounter.js'
 const pingPongRouter = Router()
 
 pingPongRouter.get('/pingpong', async (req, res) => {
-  let counter = await getCounter()
-  counter = parseInt(counter, 10) || 0
-  counter += 1
-
-  await setCounter(String(counter))
   console.log('GET request to /api/pingpong done successfully')
+  let counter = await getCounter()
+  counter += 1
+  await setCounter(counter)
 
   res.status(200).send(`
   <div>
@@ -18,12 +16,17 @@ pingPongRouter.get('/pingpong', async (req, res) => {
   </div>`)
 })
 
-pingPongRouter.get('/health', (req, res) => {
-  res.status(200).json({ message: 'ok' })
-})
-
 pingPongRouter.get('/pings', async (req, res) => {
   res.status(200).json({ pongs: await getCounter() })
+})
+
+pingPongRouter.get('/reset', async (req, res) => {
+  await setCounter(0)
+  res.status(200).json({ message: 'Counter reset to 0' })
+})
+
+pingPongRouter.get('/health', (req, res) => {
+  res.status(200).json({ message: 'ok' })
 })
 
 export default pingPongRouter

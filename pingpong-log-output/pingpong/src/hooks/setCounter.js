@@ -1,16 +1,13 @@
-import fs from 'fs/promises'
-import 'dotenv/config'
+import { pool } from '../dbInit/initDb.js'
 
 const setCounter = async counter => {
-  const filePath = process.env.COUNT_FILE_PATH
-  if (!filePath) {
-    throw new Error('COUNT_FILE_PATH environment variable is not set')
-  }
-
   try {
-    await fs.writeFile(filePath, counter)
-  } catch (error) {
-    console.error('[ERROR]: ', error.message)
+    await pool.query(
+      'INSERT INTO counter_table (id, counter) VALUES (1, $1) ON CONFLICT (id) DO UPDATE SET counter = $1',
+      [counter]
+    )
+  } catch (err) {
+    console.log('[ERROR]: ', err.message)
   }
 }
 

@@ -1,6 +1,7 @@
 # Ignore artifacts:
 build
 coverage
+node_modules
 
 # Ignore all HTML files:
 *.html
@@ -8,3 +9,6 @@ coverage
 *.yml
 *.md
 *.css
+/**/**/initDb.js
+project/server/db/initDb.js
+server/db/initDb.js

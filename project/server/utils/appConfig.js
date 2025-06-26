@@ -1,13 +1,21 @@
-import 'dotenv/config';
+import 'dotenv/config'
 
 const {
   IMAGE_FILE_PATH,
   TIMESTAMP_FILE_PATH,
-  PORT
-} = process.env;
+  PORT,
+  POSTGRES_DATABASE,
+  POSTGRES_HOST,
+  POSTGRES_PASSWORD,
+  POSTGRES_USER,
+} = process.env
 
 export {
   IMAGE_FILE_PATH,
   TIMESTAMP_FILE_PATH,
-  PORT
+  PORT,
+  POSTGRES_DATABASE,
+  POSTGRES_HOST,
+  POSTGRES_PASSWORD,
+  POSTGRES_USER,
 }

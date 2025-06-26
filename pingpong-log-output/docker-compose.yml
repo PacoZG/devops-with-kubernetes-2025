@@ -14,6 +14,7 @@ services:
       - 3002:3002
     volumes:
       - ./shared/files:/usr/src/app/shared/files
+
   reader:
     image: hash-reader
     container_name: hash-reader
@@ -30,6 +31,7 @@ services:
       - 3001:3001
     volumes:
       - ./shared/files:/usr/src/app/shared/files
+
   pingpong:
     image: pingpong
     container_name: pingpong
@@ -39,8 +41,25 @@ services:
     environment:
       - PORT=8000
       - COUNT_FILE_PATH=shared/files/count.txt
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
     ports:
       - 8000:8000
     volumes:
       - ./shared/files:/usr/src/app/shared/files
 
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+    volumes:
+      - ./database:/var/lib/postgresql/data

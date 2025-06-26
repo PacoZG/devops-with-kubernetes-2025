@@ -65,11 +65,12 @@ code {
 }
 
 .todo {
-    border-style: dotted;
     border-width: 2px;
     margin-bottom: 10px;
     padding: 20px;
-    width: 50rem;
+    width: 45rem;
+    border-radius: 20px;
+    border-color: darkcyan;
 }
 
 .done {

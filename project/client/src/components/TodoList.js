@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useCreateTodo, useTodos } from '../hooks/useTodos'
 import { capitalize } from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
 import { serverBaseUrl } from '../utils/config.js'
 
 const TodoList = () => {
@@ -8,8 +9,12 @@ const TodoList = () => {
   const createTodoMutation = useCreateTodo()
   const [text, setText] = useState('')
 
-  if (isLoading) return <p>Loading...</p>
-  if (isError) return <p>Error loading todos</p>
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+  if (isError) {
+    return <p>Error loading todos</p>
+  }
 
   const handleSubmit = () => {
     if (text.length < 10) {
@@ -27,12 +32,21 @@ const TodoList = () => {
 
       <img
         src={`${serverBaseUrl}/api/image`}
-        alt="Random image"
-        style={{ width: '50rem', height: '50rem', marginBottom: '10px' }}
+        alt="Random"
+        style={{
+          width: '50rem',
+          height: '50rem',
+          marginBottom: '10px',
+        }}
       />
 
       <div className="create-todo">
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <input
             className={'todo-input'}
             maxLength={140}

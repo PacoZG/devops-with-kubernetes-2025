@@ -6,6 +6,5 @@
   "singleQuote": true,
   "arrowParens": "avoid",
   "printWidth": 120,
-  "parser": "flow",
   "endOfLine": "lf"
 }

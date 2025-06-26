@@ -1,7 +1,7 @@
 # Devops with Kubernetes 2025
 
-| Chapter 2: Kubernetes basics | Chapter 3: Networking between pods                                      |
-|----------------------|-------------------------------------------------------------------------|
+| Chapter 2: Kubernetes basics                                              | Chapter 3: Networking between pods                                      |
+|---------------------------------------------------------------------------|-------------------------------------------------------------------------|
 | - [1.1](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.1)   | - [2.1](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.1) |
 | - [1.2](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.2)   | - [2.2](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.2) |
 | - [1.3](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.3)   | - [2.3](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.3) |
@@ -9,7 +9,7 @@
 | - [1.5](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.5)   | - [2.5](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.5) |
 | - [1.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.6)   | - [2.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.6) |
 | - [1.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.7)   | - [2.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.7) |
-| - [1.8](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.8)   |
+| - [1.8](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.8)   | - [2.8](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.8) |
 | - [1.9](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.9)   |
 | - [1.10](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.10) |
 | - [1.11](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.11) |

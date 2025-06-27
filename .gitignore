@@ -3,3 +3,4 @@
 /**/shared/
 /**/.env
 /**/database
+/**/secret.yaml

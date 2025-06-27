@@ -1,264 +1,94 @@
-# Exercise 2.8. The project, step 11
+# Exercise 2.9 The project, step 12
 
-### Create a database and save the todos there. Again, the database should be defined as a stateful set with one replica. Use Secrets and/or ConfigMaps to have the backend access the database.
+### Create a CronJob that generates a new todo every hour to remind you to do 'Read <URL>', here <URL> is a Wikipedia article that was decided by the job randomly. It does not have to be a hyperlink, the user can copy-paste the URL from the todo.
 
-- [postgres.yaml](manifests/postgres.yaml)
+No changes were necessary in the application or manifests, except for creating
+the configMap containing the script that the CronJob will execute, shown below.
+
+---
+
+- [configMap.yaml](manifests/create-daily-todo-configMap.yaml)
 
 ```yaml
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: postgres
+  name: create-daily-todo
+  namespace: project
+data:
+  create-daily-todo.sh: |-
+    #!/usr/bin/env sh
+
+    # Exit immediately if a command exits with a non-zero status.
+    set -e
+
+    echo "Posting the new TODO to $SERVER_URL"
+
+    URL_GEN_OUTPUT=$(curl -sS -w "%{url_effective}\n" -I -L https://en.wikipedia.org/wiki/Special:Random -o /dev/null)
+    URL_GEN_STATUS=$?
+
+    if [ $URL_GEN_STATUS -eq 0 ]; then
+      URL=$(echo "$URL_GEN_OUTPUT" | tail -n 1)
+      echo "Generated random Wikipedia URL: $URL"
+    else
+      echo "Error: Failed to generate random Wikipedia URL (curl exit code: $URL_GEN_STATUS)." >&2
+      echo "Curl error details: $URL_GEN_OUTPUT" >&2
+      exit 1
+    fi
+
+    TODO_POST_RESPONSE=$(curl -s --show-error -X POST -H "Content-Type: application/json" -d '{"text": "<a href='${URL}' target=_blank>'${URL}'<a/>"}' "$SERVER_URL/api/todos")
+    TODO_POST_STATUS=$?
+
+    if [ $TODO_POST_STATUS -eq 0 ]; then
+      echo "SUCCESS: New TODO posted successfully!"
+    else
+      echo "ERROR: Failed to post new TODO (curl exit code: $TODO_POST_STATUS)." >&2
+      echo "Curl error details: $TODO_POST_RESPONSE" >&2
+      exit 1
+    fi
+```
+
+---
+
+- [cronJob.yaml](manifests/cronJob.yaml)
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: create-daily-todo-cron-job
   namespace: project
 spec:
-  serviceName: postgres
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
+  schedule: "* 8 * * *"
+  jobTemplate:
     spec:
-      containers:
-        - name: postgres
-          image: postgres:latest
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_HOST
-              value: postgres-svc
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: project-secret
-                  key: postgres-password
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-    - metadata:
-        name: postgres-storage
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-svc
-  namespace: project
-spec:
-  ports:
-    - port: 5432
-  clusterIP: None
-  selector:
-    app: postgres
-```
-
----
-
-## UPDATE
-
-- [server.yaml](./manifests/server.yaml)
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: server-dep
-  namespace: project
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: server
-  template:
-    metadata:
-      labels:
-        app: server
-    spec:
-      volumes:
-        - name: shared-files
-          persistentVolumeClaim:
-            claimName: project-files-claim
-      containers:
-        - name: server
-          image: sirpacoder/server:v2.7
-          imagePullPolicy: Always
-          env:
-            - name: PORT
-              value: "3001"
-            - name: IMAGE_FILE_PATH
-              value: "files/image.jpg"
-            - name: TIMESTAMP_FILE_PATH
-              value: "files/timestamp.txt"
-            - name: POSTGRES_HOST
-              value: postgres-svc
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: project-secret
-                  key: postgres-password
-          volumeMounts:
-            - name: shared-files
-              mountPath: /usr/src/app/files
-          resources:
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
-            requests:
-              memory: "256Mi"
-              cpu: "500m"
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: server-svc
-  namespace: project
-spec:
-  type: ClusterIP
-  selector:
-    app: server
-  ports:
-    - port: 30081
-      protocol: TCP
-      targetPort: 3001
-```
-
-___
-
-- [namespace.yaml](namespace/namespace.yaml)
-
-```yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: project 
-```
-
----
-
-- [client.yaml](./manifests/client.yaml)
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: client-dep
-  namespace: project
-spec:
-  selector:
-    matchLabels:
-      app: client
-  template:
-    metadata:
-      labels:
-        app: client
-    spec:
-      containers:
-        - name: client
-          image: sirpacoder/client:v1.13
-          imagePullPolicy: Always
-          env:
-            - name: REACT_APP_SERVER_URL
-              value: http://localhost:8081
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: client-svc
-  namespace: project
-spec:
-  type: ClusterIP
-  selector:
-    app: client
-  ports:
-    - port: 30081
-      protocol: TCP
-      targetPort: 3000
-```
-
----
-
-- [ingress.yaml](./manifests/ingress.yaml)
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: project
-  namespace: project
-  labels:
-    name: project
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: client-svc
-                port:
-                  number: 30081
-          - path: /api/image
-            pathType: Prefix
-            backend:
-              service:
-                name: server-svc
-                port:
-                  number: 30081
-          - path: /api/todos
-            pathType: Prefix
-            backend:
-              service:
-                name: server-svc
-                port:
-                  number: 30081
+      template:
+        spec:
+          containers:
+            - name: todo-generator-script
+              image: curlimages/curl:latest
+              command: [ "/bin/sh", "/etc/config/scripts/create-daily-todo.sh" ]
+              env:
+                - name: SERVER_URL
+                  value: http://server-svc:30081
+              volumeMounts:
+                - name: todo-script
+                  mountPath: /etc/config/scripts
+                  readOnly: true
+          restartPolicy: OnFailure
+          volumes:
+            - name: todo-script
+              configMap:
+                name: create-daily-todo
+                items:
+                  - key: create-daily-todo.sh
+                    path: create-daily-todo.sh
 
 ```
 
-To make updating and pushing images easier, I created a shell script that only
-needs a tag to we want to assign to the image and it run with the following:
+__The cronjob will be executed every day at 8:00__
 
-```shell
-  ./dockerize.sh -t v2.7
-```
-
-To dynamically create secret manifest and run all the manifests I also created a
-shell script: [deploy.sh](deploy.sh)
-
-```shell
-  ./deploy.sh
-```
-
-This decrypts and created our secrets manifests from the encrypted
-_secret.enc.yaml_
-
-After that,
-we can open our client (frontend)
+We can open our client (frontend)
 in [http://localhost:8081](http://localhost:8081) port from the browser
 
 Where we can also se the response from the server

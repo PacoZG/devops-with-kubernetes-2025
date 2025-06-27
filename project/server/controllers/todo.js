@@ -30,6 +30,8 @@ todoappRouter.post('/', async (req, res) => {
   }
 
   const newTodo = { id: uuidv4(), text: body.text, status: 'not-done' }
+  console.log(`[SERVER]: New todo to save - ${JSON.stringify(newTodo)}`)
+
   const todos = await storeTodo(newTodo)
 
   res.status(201).json(todos)

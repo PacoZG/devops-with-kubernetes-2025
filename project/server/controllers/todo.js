@@ -24,6 +24,11 @@ todoappRouter.get('/:id', async (req, res) => {
 todoappRouter.post('/', async (req, res) => {
   console.log('POST request to /api/todos done successfully')
   const { body } = req
+
+  if (body.text.length > 140) {
+    throw new Error(`[SERVER]: Text cannot be longer than 140 characters`)
+  }
+
   const newTodo = { id: uuidv4(), text: body.text, status: 'not-done' }
   const todos = await storeTodo(newTodo)
 

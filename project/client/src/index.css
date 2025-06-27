@@ -83,6 +83,9 @@ code {
 }
 
 .text {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
     font-size: 20px;
     font-weight: 700;
     margin: 0;
@@ -93,8 +96,4 @@ code {
     font-size: 20px;
     margin: 0;
     font-weight: 700;
-}
-
-.span {
-    font-weight: 300;
 }

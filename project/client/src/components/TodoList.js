@@ -78,15 +78,23 @@ const TodoList = () => {
 
       {todos.map(todo => (
         <div className={`todo ${todo.status === 'done' ? 'done' : 'not-done'}`} key={todo.id}>
-          <p className="text">
-            {`Task: `}
-            <span className="span">{todo.text}</span>
-          </p>
+          <div className="text">
+            {todo.text.includes('<a') ? (
+              <>
+                <div>{'Task: Read'}</div>
+                <div dangerouslySetInnerHTML={{ __html: todo.text }} />
+              </>
+            ) : (
+              <>
+                <div>{'Task:'}</div>
+                <div className="span">{todo.text}</div>
+              </>
+            )}
+          </div>
 
-          <p className="status">
-            {`Status: `}
-            <span className="span">{capitalize(todo.status.replace('-', ' '))}</span>
-          </p>
+          <div className="status">
+            <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
+          </div>
         </div>
       ))}
 

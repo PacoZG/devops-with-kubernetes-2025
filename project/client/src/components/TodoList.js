@@ -22,7 +22,6 @@ const TodoList = () => {
     }
     const newTodo = {
       text: text,
-      status: 'not-done',
     }
     void createTodoMutation.mutate(newTodo)
     setText('')

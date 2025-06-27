@@ -24,7 +24,7 @@ todoappRouter.get('/:id', async (req, res) => {
 todoappRouter.post('/', async (req, res) => {
   console.log('POST request to /api/todos done successfully')
   const { body } = req
-  const newTodo = { id: uuidv4(), ...body }
+  const newTodo = { id: uuidv4(), text: body.text, status: 'not-done' }
   const todos = await storeTodo(newTodo)
 
   res.status(201).json(todos)

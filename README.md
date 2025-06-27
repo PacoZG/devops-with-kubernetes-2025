@@ -10,7 +10,7 @@
 | - [1.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.6)   | - [2.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.6) |
 | - [1.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.7)   | - [2.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.7) |
 | - [1.8](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.8)   | - [2.8](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.8) |
-| - [1.9](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.9)   |
+| - [1.9](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.9)   | - [2.9](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.9) |
 | - [1.10](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.10) |
 | - [1.11](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.11) |
 | - [1.12](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.12) |

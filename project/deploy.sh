@@ -8,17 +8,17 @@ NC='\033[0m' # No Color (reset)
 
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
-if [ ! -f manifests/secret.yaml ]; then
+if [ ! -f deploy/kubernetes/manifests/secret.yaml ]; then
   printf "\n${GREEN}Creating secret.yaml file${NC}\n"
   export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
-  sops --decrypt secret.enc.yaml > manifests/secret.yaml
+  sops --decrypt secret.enc.yaml > deploy/kubernetes/manifests/secret.yaml
 else
   printf "\n${YELLOW}manifests/secret.yaml already exists${NC}\n"
 fi
 
 printf "\n${GREEN}Deploying Kubernetes resources running manifests${NC}\n"
 
-kubectl apply -f manifests
+kubectl apply -f deploy/kubernetes/manifests
 if [ $? -ne 0 ]; then
   printf -e "\n${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
   exit 1

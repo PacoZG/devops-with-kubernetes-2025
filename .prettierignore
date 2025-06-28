@@ -12,3 +12,10 @@ node_modules
 /**/**/initDb.js
 project/server/db/initDb.js
 server/db/initDb.js
+
+# Ignore all Terraform files
+*.tf
+*.tfvars
+
+# Ignore initDb.js anywhere in the project
+**/initDb.js

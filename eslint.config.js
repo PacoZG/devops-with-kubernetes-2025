@@ -71,4 +71,10 @@ module.exports = defineConfig([
       },
     },
   },
+  {
+    files: ['**/*.tf', '**/*.tfvars', '**/initDb.js'],
+    rules: {
+      'prettier/prettier': 'off',
+    },
+  },
 ])

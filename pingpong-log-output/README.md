@@ -41,7 +41,7 @@ Then configure your project and enable the Kubernetes Engine API:
 
 ### 🛠️ Kubernetes Configuration Updates
 
-- [pingpong.yaml](manifests/pingpong.yaml)
+- [pingpong.yaml](kubernetes/manifests/pingpong.yaml)
 
 ```yaml
 apiVersion: apps/v1

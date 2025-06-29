@@ -8,6 +8,7 @@ node_modules
 *.yml
 *.md
 *.css
+*.yaml
 
 # Ignore all Terraform files
 *.tf
@@ -15,3 +16,4 @@ node_modules
 
 # Ignore initDb.js anywhere in the project
 /**/**/initDb.js
+/README.md

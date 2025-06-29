@@ -17,8 +17,6 @@ spec:
       containers:
         - name: postgres
           image: postgres:latest
-          ports:
-            - containerPort: 5432
           env:
             - name: POSTGRES_HOST
               value: postgres-svc
@@ -30,10 +28,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: pingpong-secret
-                  key: postgres-password #In secrets.yaml
+                  key: postgres-password
+          ports:
+            - name: web
+              containerPort: 5432
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+              subPath: postgres
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
@@ -50,8 +52,9 @@ metadata:
   name: postgres-svc
   namespace: exercises
 spec:
-  ports:
-    - port: 5432
   clusterIP: None
   selector:
     app: postgres
+  ports:
+    - name: web
+      port: 5432

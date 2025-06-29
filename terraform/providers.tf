@@ -13,6 +13,6 @@ terraform {
   }
 }
 
-// I reframed from using "dwk-cluster" to using "paco-learning-project" since
-// this project is part of my company's Google Cloud account and is intended
-// for educational and study-related use only.
+# I switched from using “dwk-cluster” to “paco-learning-project”
+# as this project is part of my company’s Google Cloud account
+# and is intended solely for educational and learning purposes.

@@ -7,13 +7,11 @@ locals {
 }
 
 module "gke" {
-  source       = "./modules/gke"
-  cluster_name = "dwk-cluster"
-  zone         = local.zone
-
+  source            = "./modules/gke"
+  cluster_name      = "dwk-cluster"
+  zone              = local.zone
   node_machine_type = "e2-micro"
   node_disk_size_gb = "32"
   cluster_version   = "1.32"
-
-  node_count = 3
+  node_count        = 3
 }

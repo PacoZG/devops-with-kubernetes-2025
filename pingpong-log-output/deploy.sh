@@ -8,20 +8,31 @@ NC='\033[0m' # No Color (reset)
 
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
-if [ ! -f deploy/kubernetes/manifests/secret.yaml ]; then
-  printf "\n${GREEN}Creating secret.yaml file${NC}\n"
-  export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
-  sops --decrypt secret.enc.yaml > deploy/kubernetes/manifests/secret.yaml
+printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
+kubectl get namespace exercises >/dev/null 2>&1 || kubectl create namespace exercises
+
+printf "${YELLOW}Checking for persistentVolume.yaml...${NC}\n"
+if [ ! -f kubernetes/manifests/persistentvolumeclaim.yaml ]; then
+  printf "${GREEN}Creating persistentvolumeclaim.yaml file${NC}\n"
+  kubectl apply -f kubernetes/manifests/persistentvolumeclaim.yaml
 else
-  printf "\n${YELLOW}manifests/secret.yaml already exists${NC}\n"
+  printf "${YELLOW}manifests/persistentVolume.yaml already exists${NC}\n"
 fi
 
-printf "\n${GREEN}Deploying Kubernetes resources running manifests${NC}\n"
+printf "${YELLOW}Checking for secret.yaml...${NC}\n"
+if [ ! -f kubernetes/manifests/secret.yaml ]; then
+  printf "${GREEN}Creating secret.yaml file${NC}\n"
+  export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
+  sops --decrypt secret.enc.yaml > kubernetes/manifests/secret.yaml
+else
+  printf "${YELLOW}manifests/secret.yaml already exists${NC}\n"
+fi
 
-kubectl apply -f deploy/kubernetes/manifests
+printf "${GREEN}Deploying Kubernetes resources from manifests${NC}\n"
+kubectl apply -f kubernetes/manifests
 if [ $? -ne 0 ]; then
-  printf -e "\n${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
+  printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
   exit 1
 fi
 
-printf "\n${GREEN}Deployment successfully completed${NC}"
+printf "${GREEN}Deployment successfully completed${NC}\n"

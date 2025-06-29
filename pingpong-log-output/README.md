@@ -1,72 +1,45 @@
-# Exercise 2.7. Stateful applications
+# 🚀 Exercise 3.1: Deploying the Pingpong App to GKE
 
-### Run a Postgres database as a stateful set (with one replica) and save the Ping-pong application counter into the database.
+### 🎯 Goal
 
-- [postgres.yaml](manifests/postgres.yaml)
+Deploy the **Pingpong application** into a **Google Kubernetes Engine (GKE)**
+cluster, exposing it with a **LoadBalancer service**.
 
-```yaml
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: postgres
-  namespace: exercises
-spec:
-  serviceName: postgres
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      containers:
-        - name: postgres
-          image: postgres:latest
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_HOST
-              value: postgres-svc
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pingpong-secret
-                  key: postgres-password #In secrets.yaml
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-    - metadata:
-        name: postgres-storage
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
 ---
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-svc
-  namespace: exercises
-spec:
-  ports:
-    - port: 5432
-  clusterIP: None
-  selector:
-    app: postgres
+## ☁️ Cluster Setup with Terraform
+
+To set up the GKE cluster, I used _Terraform_ scripts for educational purposes.
+You can find the scripts in the [terraform](../terraform) directory.
+
+First, authenticate with Google Cloud:
+
+```shell
+  gcloud auth application-default login
+  gcloud auth login
 ```
 
----
+## After running all the commands necessary to login, create a project and create a cluster in google cloud...
 
-## UPDATE
+Then configure your project and enable the Kubernetes Engine API:
+
+```shell
+  gcloud gcloud config set project paco-learning-project
+  gcloud services enable container.googleapis.com
+```
+
+_ℹ️ Note: I switched from using dwk-cluster to paco-learning-project as this
+project is part of my company’s Google Cloud account and is intended solely for
+educational purposes._
+
+Now navigate to the Terraform directory and create the cluster:
+
+```shell
+  cd ..
+  terraform apply
+```
+
+### 🛠️ Kubernetes Configuration Updates
 
 - [pingpong.yaml](manifests/pingpong.yaml)
 
@@ -113,13 +86,8 @@ spec:
                 secretKeyRef:
                   name: pingpong-secret
                   key: postgres-password #In secrets.yaml
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
+
+# No resources requests or limits, we let Gcloud to set them dynamically
 ---
 
 apiVersion: v1
@@ -128,194 +96,109 @@ metadata:
   name: pingpong-svc
   namespace: exercises
 spec:
+  type: LoadBalancer
   selector:
     app: pingpong
   ports:
     - name: http
-      port: 30081
+      port: 80
       protocol: TCP
       targetPort: 8000
 ```
 
 ---
 
-- [namespace.yaml](namespace/namespace.yaml)
-
-```yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: exercises 
-```
-
----
-
-- [configMap.yaml](manifests/configMap.yaml)
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: log-output-config
-  namespace: exercises
-data:
-  information.txt: |
-    this is from file
-  MESSAGE: "hello world"
-```
-
----
-
-- [log_output.yaml](manifests/log_output.yaml)
+- [postgres.yaml](kubernetes/manifests/postgres.yaml)
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: log-output
+  name: postgres
   namespace: exercises
 spec:
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
-      app: log-output
+      app: postgres
   template:
     metadata:
       labels:
-        app: log-output
+        app: postgres
     spec:
-      volumes:
-        - name: shared-files
-          persistentVolumeClaim:
-            claimName: pingpong-files-claim
-        - name: reader-files
-          configMap:
-            name: log-output-config
-            items:
-              - key: information.txt
-                path: information.txt
       containers:
-        - name: hash-generator
-          image: sirpacoder/hash-generator:v2.5
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: shared-files
-              mountPath: /usr/src/app/shared/files
+        - name: postgres
+          image: postgres:latest
           env:
-            - name: GENERATOR_PORT
-              value: "3002"
-            - name: HASH_FILE_PATH
-              value: "/usr/src/app/shared/files/hash.txt"
-          resources:
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "500m"
-        - name: hash-reader
-          image: sirpacoder/hash-reader:v2.5
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: shared-files
-              mountPath: /usr/src/app/shared/files
-            - name: reader-files
-              mountPath: /usr/src/app/reader/info
-          env:
-            - name: READER_PORT
-              value: "3001"
-            - name: HASH_FILE_PATH
-              value: "/usr/src/app/shared/files/hash.txt"
-            - name: INFORMATION_FILE_PATH
-              value: /usr/src/app/reader/info/information.txt
-            - name: PING_SERVER_URL
-              value: http://pingpong-svc:30081
-            - name: MESSAGE
+            - name: POSTGRES_HOST
+              value: postgres-svc
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: log-output-config
-                  key: MESSAGE
-          resources:
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "500m"
-
+                secretKeyRef:
+                  name: pingpong-secret
+                  key: postgres-password
+          ports:
+            - name: web
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: log-output-svc
+  name: postgres-svc
   namespace: exercises
 spec:
+  clusterIP: None
   selector:
-    app: log-output
+    app: postgres
   ports:
-    - name: http
-      port: 30081
-      protocol: TCP
-      targetPort: 3001
+    - name: web
+      port: 5432
 ```
 
-___
+---
 
-- [ingress.yaml](./manifests/ingress.yaml)
+- [persistentvolumeClaim.yaml](kubernetes/manifests/persistentvolumeclaim.yaml)
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: pingpong-log-output-ingress
+  name: pingpong-files-claim
   namespace: exercises
-  labels:
-    name: pingpong-log-output
 spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: log-output-svc
-                port:
-                  number: 30081
-          - path: /pingpong
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 30081
-          - path: /pings
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 30081
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
 ```
 
-To make updating and pushing images easier, I created a shell script that only
-needs a tag to we want to assign to the image and it run with the following:
+🧪 Deploying with a Shell Script only for the pingpong app
+app.
 
 ```shell
-  ./dockerize.sh -t v2.7
+  ./deploy-pingpong.sh
 ```
 
-To dynamically create secret manifest and run all the manifests I also created a
-shell script:
-
-```shell
-  ./deploy.sh
 ```
-
-This decrypts and created our secrets manifests from the encrypted
-_secret.enc.yaml_
-
-```sh
   #!/usr/bin/env bash
   
   RED='\033[0;31m'
@@ -326,40 +209,51 @@ _secret.enc.yaml_
   
   printf "${BLUE}Running Kubernetes deployments script${NC}\n"
   
-  if [ ! -f manifests/secret.yaml ]; then
-    printf "\n${GREEN}Creating secret.yaml file${NC}\n"
+  printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
+  kubectl get namespace exercises >/dev/null 2>&1 || kubectl create namespace exercises
+  
+  printf "${YELLOW}Checking for secret.yaml...${NC}\n"
+  if [ ! -f kubernetes/manifests/secret.yaml ]; then
+    printf "${GREEN}Creating secret.yaml file${NC}\n"
     export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
-    sops --decrypt secret.enc.yaml > manifests/secret.yaml
+    sops --decrypt secret.enc.yaml > kubernetes/manifests/secret.yaml
   else
-    printf "\n${YELLOW}manifests/secret.yaml already exists${NC}\n"
+    printf "${YELLOW}manifests/secret.yaml already exists${NC}\n"
   fi
   
-  printf "\n${GREEN}Deploying Kubernetes resources running manifests${NC}\n"
-  
-  kubectl apply -f manifests
+  printf "${GREEN}Deploying Kubernetes resources from manifests${NC}\n"
+  kubectl apply -f kubernetes/manifests/persistentvolumeclaim.yaml
+  kubectl apply -f kubernetes/manifests/secret.yaml
+  kubectl apply -f kubernetes/manifests/pingpong.yaml
+  kubectl apply -f kubernetes/manifests/postgres.yaml
   if [ $? -ne 0 ]; then
-    printf -e "\n${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
+    printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
     exit 1
   fi
   
-  printf "\n${GREEN}Deployment successfully completed${NC}"
+  printf "${GREEN}Deployment successfully completed${NC}\n"
 ```
 
-The image of the hash writer can be
-found [here](https://hub.docker.com/repository/docker/sirpacoder/hash-generator/general)
+## 🔍 Monitoring & Access
 
-The image of the hash reader can be
-found [here](https://hub.docker.com/repository/docker/sirpacoder/hash-reader/general)
+Once deployed, you can retrieve the LoadBalancer IP by running:
 
-The image of the pingpong can be
-found [here](https://hub.docker.com/repository/docker/sirpacoder/pingpong/general)
+```shell
+  kubectl get svc --watch
+```
 
-With that,
-I was able
-to access to see hash on the browser and the number of requests
-made. [http://localhost:8081](http://localhost:8081)
-to see the number of
-pings [http://localhost:8081/pings](http://localhost:8081/pings),
-to increment the number of
-pings [http://localhost:8081/pingpong](http://localhost:8081/pingpong),
+Alternatively, you can check it from the GCP Console:
+
+> Kubernetes Engine > Workloads > pingpong > Exposing Services
+
+### 🧭 Useful Commands
+
+```
+  kubectl get pods
+  kubectl describe pod <pod-id>
+  kubectl logs <pod-id> --since 1h
+```
+
+These help monitor pod status, logs, and troubleshoot any issues.
+
 

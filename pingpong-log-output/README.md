@@ -19,15 +19,6 @@ First, authenticate with Google Cloud:
   gcloud auth login
 ```
 
-## After running all the commands necessary to login, create a project and create a cluster in google cloud...
-
-Then configure your project and enable the Kubernetes Engine API:
-
-```shell
-  gcloud gcloud config set project paco-learning-project
-  gcloud services enable container.googleapis.com
-```
-
 _ℹ️ Note: I switched from using dwk-cluster to paco-learning-project as this
 project is part of my company’s Google Cloud account and is intended solely for
 educational purposes._
@@ -37,6 +28,15 @@ Now navigate to the Terraform directory and create the cluster:
 ```shell
   cd ..
   terraform apply
+```
+
+## After running all the commands necessary to login and create a cluster in google cloud...
+
+Then configure your project and enable the Kubernetes Engine API:
+
+```shell
+  gcloud gcloud config set project paco-learning-project
+  gcloud services enable container.googleapis.com
 ```
 
 ### 🛠️ Kubernetes Configuration Updates

@@ -22,6 +22,7 @@ hashReaderRouter.get('/', async (req, res) => {
 })
 
 hashReaderRouter.get('/health', (req, res) => {
+  console.log('[READER]: GET request to /health done successfully')
   res.json({ message: 'ok' })
 })
 

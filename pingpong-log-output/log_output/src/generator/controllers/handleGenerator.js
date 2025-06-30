@@ -10,6 +10,7 @@ hashGeneratorRouter.get('/api/strings', (req, res) => {
 })
 
 hashGeneratorRouter.get('/health', (req, res) => {
+  console.log('[GENERATOR]: GET request to /api/health done successfully')
   res.status(200).json({ message: 'ok' })
 })
 

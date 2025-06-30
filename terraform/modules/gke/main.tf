@@ -1,18 +1,35 @@
+# modules/gke/main.tf
+
+# Define the GKE cluster itself
 resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.zone
 
-  initial_node_count = var.node_count
+  min_master_version       = var.cluster_version
+  remove_default_node_pool = true # Recommended if you define your own node pools
+  initial_node_count       = 1    # Can be 0 if remove_default_node_pool is true and you rely on custom node pools
+}
+
+# Define a specific node pool within the GKE cluster
+resource "google_container_node_pool" "primary_nodes" {
+  name     = "${var.cluster_name}-node-pool"
+  location = var.zone
+  cluster  = google_container_cluster.primary.name
+
+  node_count = var.enable_autoscaling ? var.min_node_count : var.node_count
 
   node_config {
     machine_type = var.node_machine_type
     disk_size_gb = var.node_disk_size_gb
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
   }
 
-  min_master_version = var.cluster_version
+  dynamic "autoscaling" {
+    for_each = var.enable_autoscaling ? [1] : []
+    content {
+      min_node_count = var.min_node_count
+      max_node_count = var.max_node_count
+    }
+  }
 
   lifecycle {
     ignore_changes = [

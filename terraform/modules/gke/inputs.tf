@@ -1,28 +1,48 @@
 variable "cluster_name" {
-  type = string
+  description = "The name of the GKE cluster."
+  type        = string
 }
 
 variable "zone" {
-  type = string
+  description = "The zone for the GKE cluster."
+  type        = string
 }
 
 variable "node_machine_type" {
   description = "The machine type for the cluster nodes."
   type        = string
-  default     = "e2-micro" # Your specified machine type
 }
 
 variable "node_disk_size_gb" {
-  description = "Disk size in GB for cluster nodes."
-  type        = number
-}
-
-variable "node_count" {
-  description = "Number of nodes in the default node pool."
-  type        = number
+  description = "The disk size for the cluster nodes in GB."
+  type        = string
 }
 
 variable "cluster_version" {
-  description = "The GKE cluster version (control plane and initial node pool)."
+  description = "The Kubernetes version for the cluster."
   type        = string
+}
+
+variable "node_count" {
+  description = "The initial number of nodes in the node pool when autoscaling is disabled. Ignored if autoscaling is true."
+  type        = number
+  default     = 3
+}
+
+variable "enable_autoscaling" {
+  description = "Set to true to enable autoscaling for the node pool."
+  type        = bool
+  default     = false
+}
+
+variable "min_node_count" {
+  description = "The minimum number of nodes in the node pool when autoscaling is enabled."
+  type        = number
+  default     = 1
+}
+
+variable "max_node_count" {
+  description = "The maximum number of nodes in the node pool when autoscaling is enabled."
+  type        = number
+  default     = 5
 }

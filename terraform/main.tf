@@ -10,8 +10,11 @@ module "gke" {
   source            = "./modules/gke"
   cluster_name      = "dwk-cluster"
   zone              = local.zone
-  node_machine_type = "e2-micro"
+  node_machine_type = "e2-medium"
   node_disk_size_gb = "32"
   cluster_version   = "1.32"
-  node_count        = 3
+
+  enable_autoscaling = true # Set this to true to enable
+  min_node_count     = 3    # Your desired minimum node count
+  max_node_count     = 6    # Your desired maximum node count
 }

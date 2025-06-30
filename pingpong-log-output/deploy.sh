@@ -9,15 +9,7 @@ NC='\033[0m' # No Color (reset)
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
-kubectl get namespace exercises >/dev/null 2>&1 || kubectl create namespace exercises
-
-printf "${YELLOW}Checking for persistentVolume.yaml...${NC}\n"
-if [ ! -f kubernetes/manifests/persistentvolumeclaim.yaml ]; then
-  printf "${GREEN}Creating persistentvolumeclaim.yaml file${NC}\n"
-  kubectl apply -f kubernetes/manifests/persistentvolumeclaim.yaml
-else
-  printf "${YELLOW}manifests/persistentVolume.yaml already exists${NC}\n"
-fi
+kubectl get namespace exercises >/dev/null 2>&1 || kubectl apply -f kubernetes/namespace
 
 printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/manifests/secret.yaml ]; then

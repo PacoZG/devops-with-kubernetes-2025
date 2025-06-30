@@ -19,7 +19,7 @@ spec:
             claimName: pingpong-files-claim
       containers:
         - name: pingpong
-          image: sirpacoder/pingpong:v2.7
+          image: sirpacoder/pingpong:v3.2
           imagePullPolicy: Always
           volumeMounts:
             - name: shared-files
@@ -39,7 +39,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: pingpong-secret
-                  key: postgres-password #In secrets.yaml
+                  key: postgres-password
 
 ---
 
@@ -49,7 +49,7 @@ metadata:
   name: pingpong-svc
   namespace: exercises
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: pingpong
   ports:

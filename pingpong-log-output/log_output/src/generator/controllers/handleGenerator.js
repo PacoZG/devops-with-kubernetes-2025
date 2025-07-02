@@ -3,6 +3,11 @@ import { date_hash } from '../actions/generateHash.js'
 
 const hashGeneratorRouter = Router()
 
+hashGeneratorRouter.get('/', (req, res) => {
+  console.log('[GENERATOR]: GET request to / done successfully')
+  res.status(200).json({ message: 'ok' })
+})
+
 hashGeneratorRouter.get('/api/strings', (req, res) => {
   console.log('[GENERATOR]: GET request to /api/strings done successfully')
 
@@ -10,7 +15,7 @@ hashGeneratorRouter.get('/api/strings', (req, res) => {
 })
 
 hashGeneratorRouter.get('/health', (req, res) => {
-  console.log('[GENERATOR]: GET request to /api/health done successfully')
+  console.log('[GENERATOR]: GET request to /health done successfully')
   res.status(200).json({ message: 'ok' })
 })
 

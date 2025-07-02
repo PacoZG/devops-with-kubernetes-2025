@@ -15,9 +15,9 @@ pingPongRouter.get('/pingpong', async (req, res) => {
   await setCounter(counter)
 
   res.status(200).send(`
-  <div>
-    <p>Ping / Pongs: ${counter}</p>
-  </div>`)
+    <div>
+      <p>Ping / Pongs: ${counter}</p>
+    </div>`)
 })
 
 pingPongRouter.get('/pings', async (req, res) => {

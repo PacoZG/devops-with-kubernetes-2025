@@ -11,6 +11,9 @@ printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
 kubectl get namespace exercises >/dev/null 2>&1 || kubectl apply -f kubernetes/namespace
 
+printf "${YELLOW}Creating Kubernetes volumes${NC}\n"
+kubectl apply -f kubernetes/volumes/gkepersistentvolumeclaim.yaml
+
 printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/manifests/secret.yaml ]; then
   printf "${GREEN}Creating secret.yaml file${NC}\n"

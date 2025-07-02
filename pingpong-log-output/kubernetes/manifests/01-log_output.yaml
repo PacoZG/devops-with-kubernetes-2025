@@ -25,7 +25,7 @@ spec:
                 path: information.txt
       containers:
         - name: hash-generator
-          image: sirpacoder/hash-generator:v3.2
+          image: sirpacoder/hash-generator:v3.3
           imagePullPolicy: Always
           env:
             - name: GENERATOR_PORT
@@ -44,7 +44,7 @@ spec:
               cpu: "500m"
 
         - name: hash-reader
-          image: sirpacoder/hash-reader:v3.2
+          image: sirpacoder/hash-reader:v3.3
           imagePullPolicy: Always
           env:
             - name: READER_PORT
@@ -78,8 +78,11 @@ kind: Service
 metadata:
   name: log-output-svc
   namespace: exercises
+  annotations:
+    # Correctly configures container-native NEG for Gateway/Ingress
+    cloud.google.com/neg: '{"exposed_ports":{"80":{"target_port":3001}}, "ingress": true}'
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: log-output
   ports:

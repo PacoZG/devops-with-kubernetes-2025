@@ -19,7 +19,7 @@ spec:
             claimName: pingpong-files-claim
       containers:
         - name: pingpong
-          image: sirpacoder/pingpong:v3.2
+          image: sirpacoder/pingpong:v3.3
           imagePullPolicy: Always
           volumeMounts:
             - name: shared-files
@@ -40,6 +40,13 @@ spec:
                 secretKeyRef:
                   name: pingpong-secret
                   key: postgres-password
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
 
 ---
 
@@ -48,8 +55,13 @@ kind: Service
 metadata:
   name: pingpong-svc
   namespace: exercises
+  annotations:
+    # This tells the GCE NEG controller to create a NEG for port 80 (service port)
+    # and explicitly use the targetPort 8000 for that NEG.
+    cloud.google.com/neg: '{"exposed_ports": {"80":{"target_port":8000}}, "ingress": true}'
+    # The 'name' is optional, but helps differentiate.
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: pingpong
   ports:
@@ -57,3 +69,4 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 8000
+

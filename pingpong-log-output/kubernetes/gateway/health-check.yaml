@@ -1,0 +1,47 @@
+# filename: log-output-health-check-policy.yaml
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: log-output-health-check-policy
+  namespace: exercises # Must be in the same namespace as log-output-svc
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: log-output-svc
+  default:
+    config:
+      type: HTTP # Explicitly define the type of health check
+      httpHealthCheck:
+        port: 3001
+        requestPath: /
+    # Optional: Adjust other health check parameters directly under 'default'
+    # These are not under 'config' or 'httpHealthCheck'
+    # checkIntervalSec: 5
+    # timeoutSec: 5
+    # healthyThreshold: 1
+    # unhealthyThreshold: 2
+---
+# filename: pingpong-health-check-policy.yaml
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: pingpong-health-check-policy
+  namespace: exercises # Must be in the same namespace as pingpong-svc
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: pingpong-svc
+  default:
+    config:
+      type: HTTP # Explicitly define the type of health check
+      httpHealthCheck:
+        port: 8000
+        requestPath: /
+    # Optional: Adjust other health check parameters directly under 'default'
+    # These are not under 'config' or 'httpHealthCheck'
+    # checkIntervalSec: 5
+    # timeoutSec: 5
+    # healthyThreshold: 1
+    # unhealthyThreshold: 2

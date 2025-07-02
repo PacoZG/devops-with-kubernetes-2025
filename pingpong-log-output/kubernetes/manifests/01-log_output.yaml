@@ -78,8 +78,6 @@ kind: Service
 metadata:
   name: log-output-svc
   namespace: exercises
-  annotations:
-    cloud.google.com/neg: '{"exposed_ports":{"80":{"target_port":3001}}, "ingress": true}'
 spec:
   type: ClusterIP
   selector:

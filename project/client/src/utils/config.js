@@ -1,3 +1,5 @@
-const serverBaseUrl = process.env.REACT_APP_SERVER_URL
+const { REACT_APP_SERVER_URL } = process.env
 
-export { serverBaseUrl }
+console.debug('[CLIENT]: Server URL:', REACT_APP_SERVER_URL)
+
+export { REACT_APP_SERVER_URL }

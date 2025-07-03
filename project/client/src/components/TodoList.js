@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCreateTodo, useTodos } from '../hooks/useTodos'
 import { capitalize } from 'lodash'
-import { serverBaseUrl } from '../utils/config.js'
+import { REACT_APP_SERVER_URL } from '../utils/config.js'
 
 const TodoList = () => {
   const { data: todos = [], isLoading, isError } = useTodos()
@@ -17,13 +17,15 @@ const TodoList = () => {
 
   const handleSubmit = () => {
     if (text.length < 10) {
-      window.alert('Test is too short!')
+      window.alert('Task text is too short!')
       return
     }
     const newTodo = {
       text: text,
     }
     void createTodoMutation.mutate(newTodo)
+
+    console.info('[CLIENT]: Todo to create:', newTodo)
     setText('')
   }
 
@@ -32,7 +34,7 @@ const TodoList = () => {
       <header className="TodoList__header">The Project App</header>
 
       <img
-        src={`${serverBaseUrl}/api/image`}
+        src={`${REACT_APP_SERVER_URL}/api/image`}
         alt="Random"
         style={{
           width: '50rem',

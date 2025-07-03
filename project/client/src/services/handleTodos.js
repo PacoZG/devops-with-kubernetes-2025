@@ -1,11 +1,13 @@
 import axios from 'axios'
 import { REACT_APP_SERVER_URL } from '../utils/config.js'
 
-const API_BASE_URL = REACT_APP_SERVER_URL || '' // Fallback for local dev
+const baseUrl = REACT_APP_SERVER_URL
+console.log({ baseUrl })
 
 const getAllTodos = async () => {
+  console.log(`Posting ToDo to ${baseUrl}/api/todos`)
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/todos`)
+    const response = await axios.get(`${baseUrl}/api/todos`)
     return response.data
   } catch (error) {
     console.error('Failed to fetch todos:', error)
@@ -14,7 +16,8 @@ const getAllTodos = async () => {
 }
 
 const createTodo = async todo => {
-  const response = await axios.post(`${API_BASE_URL}/api/todos`, todo)
+  console.log(`Posting ToDo to ${baseUrl}/api/todos`)
+  const response = await axios.post(`${baseUrl}/api/todos`, todo)
   return response.data
 }
 

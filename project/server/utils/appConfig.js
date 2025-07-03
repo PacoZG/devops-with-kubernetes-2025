@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 const { IMAGE_FILE_PATH, TIMESTAMP_FILE_PATH, PORT, POSTGRES_HOST, POSTGRES_PASSWORD } = process.env
 
-console.debug('[SERVER]: Postgres config', {
+console.log('[SERVER]: Postgres config', {
   POSTGRES_HOST,
 })
 

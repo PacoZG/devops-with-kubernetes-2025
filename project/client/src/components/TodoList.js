@@ -25,7 +25,7 @@ const TodoList = () => {
     }
     void createTodoMutation.mutate(newTodo)
 
-    console.info('[CLIENT]: Todo to create:', newTodo)
+    console.log('[CLIENT]: Todo to create:', newTodo)
     setText('')
   }
 

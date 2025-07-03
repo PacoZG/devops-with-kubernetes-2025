@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              value: http://server-svc:80
+              value: ""
           resources:
             requests:
               memory: "512Mi"

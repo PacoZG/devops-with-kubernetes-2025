@@ -5,13 +5,13 @@ resources:
   - 00-client.yaml
   - 01-server.yaml
   - 02-postgres.yaml
-  - 03-create-daily-todo-configMap.yaml
+  - 03-configMap.yaml
   - 04-cronJob.yaml
   - 05-ingress.yaml
   - secret.yaml
 
 images:
   - name: CLIENT/IMAGE
-    newName: sirpacoder/client:v2.10
+    newName: sirpacoder/client:v3.5
   - name: SERVER/IMAGE
-    newName: sirpacoder/server:v2.10
+    newName: sirpacoder/server:v3.5

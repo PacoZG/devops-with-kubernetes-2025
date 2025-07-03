@@ -19,7 +19,7 @@ spec:
             claimName: project-files-claim
       containers:
         - name: server
-          image: CLIENT/IMAGE
+          image: SERVER/IMAGE
           imagePullPolicy: Always
           env:
             - name: PORT
@@ -31,7 +31,7 @@ spec:
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: config-env-variables
+                  name: config-map-variables
                   key: postgres-host
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -42,11 +42,11 @@ spec:
             - name: shared-files
               mountPath: /usr/src/app/files
           resources:
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
             requests:
-              memory: "256Mi"
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
               cpu: "500m"
 ---
 
@@ -56,7 +56,7 @@ metadata:
   name: server-svc
   namespace: project
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: server
   ports:

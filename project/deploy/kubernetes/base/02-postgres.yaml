@@ -29,7 +29,7 @@ spec:
                   key: postgres-password
           volumeMounts:
             - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/project/database
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
@@ -46,8 +46,9 @@ metadata:
   name: postgres-svc
   namespace: project
 spec:
-  ports:
-    - port: 5432
   clusterIP: None
   selector:
     app: postgres
+  ports:
+    - name: web
+      port: 5432

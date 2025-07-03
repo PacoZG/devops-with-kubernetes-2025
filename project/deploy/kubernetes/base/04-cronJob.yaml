@@ -24,7 +24,7 @@ spec:
           volumes:
             - name: todo-script
               configMap:
-                name: create-daily-todo
+                name: config-map-variables
                 items:
                   - key: create-daily-todo.sh
                     path: create-daily-todo.sh

@@ -34,7 +34,7 @@ metadata:
   name: client-svc
   namespace: project
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: client
   ports:

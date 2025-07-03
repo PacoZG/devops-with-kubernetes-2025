@@ -4,6 +4,7 @@ metadata:
   name: create-daily-todo
   namespace: project
 data:
+  postgres-host: postgres-svc
   create-daily-todo.sh: |-
     #!/usr/bin/env sh
 

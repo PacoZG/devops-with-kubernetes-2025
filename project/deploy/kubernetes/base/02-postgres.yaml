@@ -22,10 +22,6 @@ spec:
           env:
             - name: POSTGRES_HOST
               value: postgres-svc
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: postgres
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

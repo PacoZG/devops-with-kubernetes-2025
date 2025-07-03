@@ -19,7 +19,7 @@ spec:
             claimName: project-files-claim
       containers:
         - name: server
-          image: sirpacoder/server:v2.10
+          image: CLIENT/IMAGE
           imagePullPolicy: Always
           env:
             - name: PORT
@@ -29,11 +29,10 @@ spec:
             - name: TIMESTAMP_FILE_PATH
               value: "files/timestamp.txt"
             - name: POSTGRES_HOST
-              value: postgres-svc
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: config-env-variables
+                  key: postgres-host
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -61,6 +60,6 @@ spec:
   selector:
     app: server
   ports:
-    - port: 30081
+    - port: 80
       protocol: TCP
       targetPort: 3001

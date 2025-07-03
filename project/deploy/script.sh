@@ -27,7 +27,7 @@ fi
 
 printf "${GREEN}Deploying Kubernetes resources with ${NC}"
 printf "${YELLOW}kubectl apply -k kubernetes/overlays/dev${NC}\n"
-kubectl apply -k kubernetes/overlays/dev
+kubectl kustomize kubernetes/overlays/dev | kubectl apply -f -
 if [ $? -ne 0 ]; then
   printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
   exit 1

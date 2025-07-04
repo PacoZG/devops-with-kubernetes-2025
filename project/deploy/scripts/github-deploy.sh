@@ -27,7 +27,7 @@ fi
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring '${NAMESPACE_NAME}' namespace exists...${NC}\n"
-kubectl get namespace "${NAMESPACE_NAME}" >/dev/null 2>&1 || kubectl create namespace "${NAMESPACE_NAME}"
+kubectl create namespace "${NAMESPACE_NAME}" || true
 kubectl config set-context --current --namespace="${NAMESPACE_NAME}"
 
 printf "${BLUE}Navigating to project/deploy directory${NC}\n"

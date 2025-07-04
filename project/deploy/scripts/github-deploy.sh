@@ -46,7 +46,7 @@ else
 fi
 
 printf "${YELLOW}Setting images via kustomize${NC}\n"
-cd ../../kubernetes/base
+cd kubernetes/base
 kustomize edit set namespace "${NAMESPACE_NAME}"
 kustomize edit set image CLIENT/IMAGE=${GCP_REGISTRY_PATH}/${CLIENT_IMAGE}:${IMAGE_TAG}
 kustomize edit set image SERVER/IMAGE=${GCP_REGISTRY_PATH}/${SERVER_IMAGE}:${IMAGE_TAG}

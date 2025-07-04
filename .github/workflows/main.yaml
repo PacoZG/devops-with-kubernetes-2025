@@ -45,19 +45,19 @@ jobs:
       - name: 'Set up Docker Buildx'
         run: gcloud auth configure-docker "$REGISTRY"
 
-      - name: 'Checking working path'
-        run: |-
-          cd project/
-          pwd
+      - name: 'Verify current working directory (should be repo root)'
+        run: pwd
 
       - name: "Set tag based on branch"
         run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
 
       - name: Build Client Image
+        working-directory: project
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG" ./client
 
       - name: Build Server Image
+        working-directory: project
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG" ./server
 
@@ -74,9 +74,12 @@ jobs:
 
       - name: Deploy
         run: |-
-          kubectl create namespace ${GITHUB_REF#refs/heads/} || true
-          kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
-          kustomize edit set namespace ${GITHUB_REF#refs/heads/}
+          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          
+          kubectl create namespace "$NAMESPACE_NAME" || true
+          kubectl config set-context --current --namespace="$NAMESPACE_NAME"
+          # Assuming kustomize files are at the root of the repository for these commands
+          kustomize edit set namespace "$NAMESPACE_NAME"
           kustomize edit set image CLIENT/IMAGE=$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG
           kustomize edit set image SERVER/IMAGE=$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG
           kustomize build . | kubectl apply -f -

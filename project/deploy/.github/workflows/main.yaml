@@ -1,0 +1,77 @@
+name: Release application
+
+on:
+  push:
+
+env:
+  BRANCH: ${{ github.ref_name }}
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  GCP_REGISTRY_PATH: europe-north1-docker.pkg.dev/paco-learning-project/dwk-repository
+  IMAGE: dwk-environments
+  SERVICE: dwk-environments
+  CLIENT_IMAGE: client
+  SERVER_IMAGE: server
+
+jobs:
+  build-publish-deploy:
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: Configure docker to use the gcloud command-line tool as a credential helper
+        run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          project_id: ${{ env.PROJECT_ID }}
+          location: ${{ env.GKE_ZONE }}
+
+      - run: |-
+          cd ../../
+
+#      - name: Build Client Image
+#        run: |-
+#          docker build --tag "GCP_REGISTRY_PATH/CLIENT_IMAGE:BRANCH-$GITHUB_SHA" ../../../client
+#
+#      - name: Build Server Image
+#        run: |-
+#          docker build --tag "$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" ./server
+#
+#      - name: Publish Client Image
+#        run: |-
+#          docker push "$PROJECT_ID/$CLIENT_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+#
+#      - name: Publish Server Image
+#        run: |-
+#          docker push "$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+#
+#      - name: Set up Kustomize
+#        uses: imranismail/setup-kustomize@v2.1.0
+#
+#      - name: Deploy
+#        run: |-
+#          kubectl config set-context --current --namespace=project
+#          kustomize edit set image CLIENT/IMAGE=$PROJECT_ID/$CLIENT_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+#          kustomize edit set image SERVER/IMAGE=$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+#          kustomize edit set image CRONJOB/IMAGE=$PROJECT_ID/$CRONJOB_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+#          kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment $CLIENT_IMAGE-dep
+#          kubectl rollout status deployment $SERVER_IMAGE-dep
+#          kubectl get services -o wide

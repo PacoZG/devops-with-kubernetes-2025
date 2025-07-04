@@ -7,3 +7,4 @@
 /**/**/.terraform/
 /**/**/.terraform*
 /**/**/terraform.tfstate*
+/**/**/private-key.json

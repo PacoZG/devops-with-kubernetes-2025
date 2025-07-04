@@ -6,7 +6,6 @@ on:
 env:
   BRANCH: ${{ github.ref_name }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  NAMESPACE: $(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev

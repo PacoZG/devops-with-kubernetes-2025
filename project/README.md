@@ -1,4 +1,4 @@
-# Exercise 3.8: The project, step 16
+# Exercise 3.7: The project, step 16
 
 ### Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the namespace project.
 

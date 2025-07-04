@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 
+set -e
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color (reset)
+
+while getopts "n:" opt; do
+  case $opt in
+    t) NAMESPACE_NAME="$OPTARG" ;;
+    *) printf "${RED}Usage: %s -n <namesapce>\n${NC}" "$0"; exit 1 ;; # Error usage in red
+  esac
+done
+
+if [ -z "$TAG" ]; then
+  printf "${RED}Error: Tag (-n) is required.\n${NC}" # Error in red
+  printf "${RED}Usage: %s -n <namespace>\n${NC}" "$0" # Usage in red
+  exit 1
+fi
+
 
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 

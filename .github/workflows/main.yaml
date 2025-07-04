@@ -6,6 +6,7 @@ on:
 env:
   BRANCH: ${{ github.ref_name }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  NAMESPACE: $(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
@@ -78,14 +79,15 @@ jobs:
           version: 'latest'
 
       - name: 'Make deploy.sh executable'
-        run: chmod +x project/deploy/deploy.sh
+        run: chmod +x project/deploy/github-deploy.sh
 
 
       - name: 'Run deployment script'
-        run: ./deploy.sh
+        run: |-
+          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          ./github-deploy.sh -n NAMESPACE_NAME
         working-directory: project/deploy
         env:
-          NAMESPACE_NAME: ${{ github.ref_name }}
           GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}
           CLIENT_IMAGE: ${{ env.CLIENT_IMAGE }}
           SERVER_IMAGE: ${{ env.SERVER_IMAGE }}

@@ -34,7 +34,7 @@ ls -la .
 printf "${YELLOW}--- End Debugging ---${NC}"
 
 printf "${YELLOW}Creating Kubernetes volumes${NC}\n"
-kubectl apply -f kubernetes/volumes/gkepersistentvolumeclaim.yaml
+kubectl apply -f kubernetes/volumes/gkepersistentvolumeclaim.yaml -n NAMESPACE_NAME
 
 printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/base/secret.yaml ]; then

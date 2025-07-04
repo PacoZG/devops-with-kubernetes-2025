@@ -16,7 +16,7 @@ env:
   SERVER_IMAGE: server
 
 jobs:
-  build-publish-deploy:
+  project-build-publish-deploy:
     name: Build, Publish and Deploy
     runs-on: ubuntu-latest
 
@@ -50,32 +50,36 @@ jobs:
           cd project/
           pwd
 
-#      - name: Build Client Image
-#        run: |-
-#          docker build --tag "GCP_REGISTRY_PATH/CLIENT_IMAGE:BRANCH-$GITHUB_SHA" ../../../client
-#
-#      - name: Build Server Image
-#        run: |-
-#          docker build --tag "$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" ./server
-#
-#      - name: Publish Client Image
-#        run: |-
-#          docker push "$PROJECT_ID/$CLIENT_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
-#
-#      - name: Publish Server Image
-#        run: |-
-#          docker push "$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
-#
-#      - name: Set up Kustomize
-#        uses: imranismail/setup-kustomize@v2.1.0
-#
-#      - name: Deploy
-#        run: |-
-#          kubectl config set-context --current --namespace=project
-#          kustomize edit set image CLIENT/IMAGE=$PROJECT_ID/$CLIENT_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-#          kustomize edit set image SERVER/IMAGE=$PROJECT_ID/$SERVER_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-#          kustomize edit set image CRONJOB/IMAGE=$PROJECT_ID/$CRONJOB_IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-#          kustomize build . | kubectl apply -f -
-#          kubectl rollout status deployment $CLIENT_IMAGE-dep
-#          kubectl rollout status deployment $SERVER_IMAGE-dep
-#          kubectl get services -o wide
+      - name: "Set tag based on branch"
+        run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+
+      - name: Build Client Image
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG" ./client
+
+      - name: Build Server Image
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG" ./server
+
+      - name: Publish Client Image
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG"
+
+      - name: Publish Server Image
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Deploy
+        run: |-
+          kubectl create namespace ${GITHUB_REF#refs/heads/} || true
+          kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
+          kustomize edit set namespace ${GITHUB_REF#refs/heads/}
+          kustomize edit set image CLIENT/IMAGE=$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG
+          kustomize edit set image SERVER/IMAGE=$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment $CLIENT_IMAGE-dep
+          kubectl rollout status deployment $SERVER_IMAGE-dep
+          kubectl get services -o wide

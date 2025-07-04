@@ -1,0 +1,94 @@
+name: Project Application Deployment Workflow
+
+on:
+  push:
+
+env:
+  BRANCH: ${{ github.ref_name }}
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  NAMESPACE: $(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  REGISTRY: europe-north1-docker.pkg.dev
+  GCP_REGISTRY_PATH: europe-north1-docker.pkg.dev/paco-learning-project/dwk-repository
+  IMAGE: dwk-environments
+  SERVICE: dwk-environments
+  CLIENT_IMAGE: client
+  SERVER_IMAGE: server
+
+jobs:
+  project-build-publish-deploy:
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'Get GCloud credentials'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: 'Set up Docker Buildx'
+        run: gcloud auth configure-docker "$REGISTRY"
+
+      - name: 'Verify current working directory (should be repo root)'
+        run: pwd
+
+      - name: "Set tag based on branch"
+        run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+
+      - name: 'Build Client Image'
+        working-directory: project
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG" ./client
+
+      - name: 'Build Server Image'
+        working-directory: project
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG" ./server
+
+      - name: 'Publish Client Image'
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG"
+
+      - name: 'Publish Server Image'
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG"
+
+      - name: 'Set up Kustomize'
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
+        with:
+          version: 'latest'
+
+      - name: 'Make deploy.sh executable'
+        run: chmod +x project/deploy/scripts/github-deploy.sh
+
+
+      - name: 'Run deployment script'
+        working-directory: project/deploy/scripts
+        run: |-
+          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          ./github-deploy.sh -n "$NAMESPACE_NAME"
+        env:
+          GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}
+          CLIENT_IMAGE: ${{ env.CLIENT_IMAGE }}
+          SERVER_IMAGE: ${{ env.SERVER_IMAGE }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}

@@ -43,11 +43,11 @@ spec:
               mountPath: /usr/src/app/files
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
               cpu: "500m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
 ---
 
 apiVersion: v1

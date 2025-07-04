@@ -1,16 +1,8 @@
-# Exercise 3.6: The project, step 15
+# Exercise 3.8: The project, step 16
 
-### Setup automatic deployment for the project as well.
+### Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the namespace project.
 
-No changes were necessary to apply in the Project application code base,
-instead I configured the GitHug workflow and created a
-script [github-deploy.sh](deploy/scripts/github-deploy.sh)
-to use in the workflow that encapsulates and centralizes the complex deployment
-logic.
-Instead of putting all Kubernetes-related commands directly in the YAML workflow
-file
-
-Here is the content of the workflow and the deployment scripts
+No significant changes were apply to the workflow or the script
 
 - [main.yaml](../.github/workflows/main.yaml)
 
@@ -102,7 +94,7 @@ jobs:
       - name: 'Run deployment script'
         working-directory: project/deploy/scripts
         run: |-
-          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          NAMESPACE_NAME=${GITHUB_REF#refs/heads/}
           ./github-deploy.sh -n "$NAMESPACE_NAME"
         env:
           GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}
@@ -145,7 +137,7 @@ fi
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring '${NAMESPACE_NAME}' namespace exists...${NC}\n"
-kubectl get namespace "${NAMESPACE_NAME}" >/dev/null 2>&1 || kubectl create namespace "${NAMESPACE_NAME}"
+kubectl create namespace "${NAMESPACE_NAME}" || true
 kubectl config set-context --current --namespace="${NAMESPACE_NAME}"
 
 printf "${BLUE}Navigating to project/deploy directory${NC}\n"

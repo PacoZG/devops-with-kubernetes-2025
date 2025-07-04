@@ -85,7 +85,7 @@ jobs:
       - name: 'Run deployment script'
         run: |-
           NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-          ./github-deploy.sh -n NAMESPACE_NAME
+          ./github-deploy.sh -n "$NAMESPACE_NAME"
         working-directory: project/deploy/scripts
         env:
           GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}

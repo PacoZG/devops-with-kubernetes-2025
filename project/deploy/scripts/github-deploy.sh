@@ -6,18 +6,18 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color (reset)
+NC='\033[0m'
 
 while getopts "n:" opt; do
   case $opt in
-    t) NAMESPACE_NAME="$OPTARG" ;;
-    *) printf "${RED}Usage: %s -n <namesapce>\n${NC}" "$0"; exit 1 ;; # Error usage in red
+    n) NAMESPACE_NAME="$OPTARG" ;;
+    *) printf "${RED}Usage: %s -n <namespace>\n${NC}" "$0"; exit 1 ;;
   esac
 done
 
-if [ -z "$TAG" ]; then
-  printf "${RED}Error: Tag (-n) is required.\n${NC}" # Error in red
-  printf "${RED}Usage: %s -n <namespace>\n${NC}" "$0" # Usage in red
+if [ -z "$NAMESPACE_NAME" ]; then
+  printf "${RED}Error: Namespace (-n) is required.\n${NC}"
+  printf "${RED}Usage: %s -n <namespace>\n${NC}" "$0"
   exit 1
 fi
 
@@ -32,7 +32,6 @@ kubectl apply -f kubernetes/volumes/gkepersistentvolumeclaim.yaml
 printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/base/secret.yaml ]; then
   printf "${GREEN}Creating secret.yaml file${NC}\n"
-  sops --version
   export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
   sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
 else
@@ -45,16 +44,8 @@ kustomize edit set namespace "${NAMESPACE_NAME}"
 kustomize edit set image CLIENT/IMAGE=${GCP_REGISTRY_PATH}/${CLIENT_IMAGE}:${IMAGE_TAG}
 kustomize edit set image SERVER/IMAGE=${GCP_REGISTRY_PATH}/${SERVER_IMAGE}:${IMAGE_TAG}
 
-
-printf "${GREEN}Deploying Kubernetes resources with ${NC}"
-printf "${YELLOW}kubectl apply -k kubernetes/overlays/dev${NC}\n"
+printf "${GREEN}Deploying Kubernetes resources${NC}\n"
 kustomize build . | kubectl apply -f -
-kubectl rollout status deployment ${CLIENT_IMAGE}
-kubectl rollout status deployment ${SERVER_IMAGE}
+kubectl rollout status deployment ${CLIENT_IMAGE}-dep
+kubectl rollout status deployment ${SERVER_IMAGE}-dep
 kubectl get services -o wide
-if [ $? -ne 0 ]; then
-  printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
-  exit 1
-fi
-
-printf "${GREEN}Deployment successfully completed${NC}\n"

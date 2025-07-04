@@ -79,7 +79,7 @@ jobs:
           version: 'latest'
 
       - name: 'Make deploy.sh executable'
-        run: chmod +x project/deploy/github-deploy.sh
+        run: chmod +x project/deploy/scripts/github-deploy.sh
 
 
       - name: 'Run deployment script'

@@ -51,28 +51,34 @@ jobs:
       - name: "Set tag based on branch"
         run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
 
-      - name: Build Client Image
+      - name: 'Build Client Image'
         working-directory: project
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG" ./client
 
-      - name: Build Server Image
+      - name: 'Build Server Image'
         working-directory: project
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG" ./server
 
-      - name: Publish Client Image
+      - name: 'Publish Client Image'
         run: |-
           docker push "$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG"
 
-      - name: Publish Server Image
+      - name: 'Publish Server Image'
         run: |-
           docker push "$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG"
 
-      - name: Set up Kustomize
+      - name: 'Set up Kustomize'
         uses: imranismail/setup-kustomize@v2.1.0
 
-      - name: Deploy
+      - name: 'Create secret-yaml manifest'
+        working-directory: project/deploy
+        run: |-
+          export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
+          sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
+
+      - name: 'Deploy'
         working-directory: project/deploy/kubernetes/base
         run: |-
           NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')

@@ -21,11 +21,11 @@ spec:
               value: ""
           resources:
             requests:
-              cpu: "50m"
-              memory: "64Mi"
+              memory: '64Mi'
+              cpu: '250m'
             limits:
-              cpu: "100m"
-              memory: "128Mi"
+              memory: '516Mi'
+              cpu: '500m'
 ---
 
 apiVersion: v1

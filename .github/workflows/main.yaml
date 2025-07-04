@@ -1,4 +1,4 @@
-name: Release application
+name: Project Application Deployment Workflow
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
           location: ${{ env.GKE_ZONE }}
 
       - run: |-
-          cd ../../
+          cd project/
           pwd
 
 #      - name: Build Client Image

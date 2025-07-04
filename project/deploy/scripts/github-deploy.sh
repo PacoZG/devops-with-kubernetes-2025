@@ -8,8 +8,6 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color (reset)
 
-cd scripts
-
 while getopts "n:" opt; do
   case $opt in
     t) NAMESPACE_NAME="$OPTARG" ;;
@@ -42,7 +40,7 @@ else
 fi
 
 printf "${YELLOW}Setting images via kustomize${NC}\n"
-cd ../kubernetes/base
+cd ../../kubernetes/base
 kustomize edit set namespace "${NAMESPACE_NAME}"
 kustomize edit set image CLIENT/IMAGE=${GCP_REGISTRY_PATH}/${CLIENT_IMAGE}:${IMAGE_TAG}
 kustomize edit set image SERVER/IMAGE=${GCP_REGISTRY_PATH}/${SERVER_IMAGE}:${IMAGE_TAG}

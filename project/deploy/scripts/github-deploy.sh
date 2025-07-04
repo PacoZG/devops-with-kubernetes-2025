@@ -28,7 +28,7 @@ kubectl get namespace "${NAMESPACE_NAME}" >/dev/null 2>&1 || kubectl create name
 
 
 printf "${BLUE}Navigating to /deploy directory${NC}\n"
-cd ../../
+cd ..
 printf "${YELLOW}Listing files in current directory:${NC}"
 ls -la .
 printf "${YELLOW}--- End Debugging ---${NC}"

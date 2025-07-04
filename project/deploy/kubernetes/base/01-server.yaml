@@ -19,7 +19,7 @@ spec:
             claimName: project-files-claim
       containers:
         - name: server
-          image: SERVER/IMAGE
+          image: sirpacoder/server:v3.5
           imagePullPolicy: Always
           env:
             - name: PORT

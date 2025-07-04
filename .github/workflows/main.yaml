@@ -75,12 +75,13 @@ jobs:
       - name: Setup SOPS
         uses: nhedger/setup-sops@v2
         with:
-          version: '3.7.3'
+          version: 'latest'
 
       - name: 'Run SOPS: Create secret.yaml manifest'
+        working-directory: project/deploy
         run: |-
           sops --version
-          export SOPS_AGE_KEY_FILE='${{ secrets.SOPS_AGE_KEY }}'
+          export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
           sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
 
       - name: 'Deploy'

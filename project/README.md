@@ -65,12 +65,7 @@ Now, using `kustomize create` we can build the resources needed to deploy to GKE
 
 ```shell
   cd deploy/kubernetes/base
-  kustomize create --namespace=project --autodetect 
-  ..
-  ..
-  ..
-  cd deploy/kubernetes/overlays/dev
-  kustomize create --namespace=project --resources ../../base
+  kustomize create --namespace=project --autodetect
 ```
 
 After that, I was able to run the following [script](deploy/script.sh)
@@ -105,7 +100,7 @@ fi
 
 printf "${GREEN}Deploying Kubernetes resources with ${NC}"
 printf "${YELLOW}kubectl apply -k kubernetes/overlays/dev${NC}\n"
-kubectl kustomize kubernetes/overlays/dev | kubectl apply -f -
+kubectl kustomize kubernetes/base | kubectl apply -f -
 if [ $? -ne 0 ]; then
   printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
   exit 1

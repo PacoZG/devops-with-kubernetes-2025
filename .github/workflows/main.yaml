@@ -72,11 +72,14 @@ jobs:
       - name: 'Set up Kustomize'
         uses: imranismail/setup-kustomize@v2.1.0
 
-      - name: 'Create secret.yaml manifest'
-        working-directory: project/deploy
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
+        with:
+          version: 'latest'
+
+      - name: 'Run SOPS: Create secret.yaml manifest'
         run: |-
-          sudo apt-get update
-          sudo apt-get install -y sops
+          sops --version
           export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
           sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
 

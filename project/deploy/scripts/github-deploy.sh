@@ -29,9 +29,9 @@ kubectl get namespace "${NAMESPACE_NAME}" >/dev/null 2>&1 || kubectl create name
 
 printf "${BLUE}Navigating to /deploy directory${NC}\n"
 cd ../../
-printg "${YELLOW}Listing files in current directory:${NC}"
+printf "${YELLOW}Listing files in current directory:${NC}"
 ls -la .
-printg "${YELLOW}--- End Debugging ---${NC}"
+printf "${YELLOW}--- End Debugging ---${NC}"
 
 printf "${YELLOW}Creating Kubernetes volumes${NC}\n"
 kubectl apply -f kubernetes/volumes/gkepersistentvolumeclaim.yaml

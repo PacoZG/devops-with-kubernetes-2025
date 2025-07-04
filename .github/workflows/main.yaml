@@ -77,25 +77,32 @@ jobs:
         with:
           version: 'latest'
 
-      - name: 'Run SOPS: Create secret.yaml manifest'
-        working-directory: project/deploy
-        run: |-
-          sops --version
-          export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
-          sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
+      - name: 'Make deploy.sh executable'
+        run: chmod +x project/deploy/deploy.sh
 
-      - name: 'Deploy'
-        working-directory: project/deploy/kubernetes/base
-        run: |-
-          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-          
-          kubectl create namespace "$NAMESPACE_NAME" || true
-          kubectl config set-context --current --namespace="$NAMESPACE_NAME"
-          # Assuming kustomize files are at the root of the repository for these commands
-          kustomize edit set namespace "$NAMESPACE_NAME"
-          kustomize edit set image CLIENT/IMAGE=$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG
-          kustomize edit set image SERVER/IMAGE=$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG
-          kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment $CLIENT_IMAGE-dep
-          kubectl rollout status deployment $SERVER_IMAGE-dep
-          kubectl get services -o wide
+
+      - name: 'Run deployment script'
+        run: ./deploy.sh
+        working-directory: project/deploy
+        env:
+          NAMESPACE_NAME: ${{ github.ref_name }}
+          GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}
+          CLIENT_IMAGE: ${{ env.CLIENT_IMAGE }}
+          SERVER_IMAGE: ${{ env.SERVER_IMAGE }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+
+#      - name: 'Deploy'
+#        working-directory: project/deploy
+#        run: |-
+#          NAMESPACE_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+#
+#          kubectl create namespace "$NAMESPACE_NAME" || true
+#          kubectl config set-context --current --namespace="$NAMESPACE_NAME"
+#          # Assuming kustomize files are at the root of the repository for these commands
+#          kustomize edit set namespace "$NAMESPACE_NAME"
+#          kustomize edit set image CLIENT/IMAGE=$GCP_REGISTRY_PATH/$CLIENT_IMAGE:$IMAGE_TAG
+#          kustomize edit set image SERVER/IMAGE=$GCP_REGISTRY_PATH/$SERVER_IMAGE:$IMAGE_TAG
+#          kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment $CLIENT_IMAGE-dep
+#          kubectl rollout status deployment $SERVER_IMAGE-dep
+#          kubectl get services -o wide

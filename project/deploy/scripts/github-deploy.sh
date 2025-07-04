@@ -68,6 +68,10 @@ kustomize edit set image SERVER/IMAGE=${GCP_REGISTRY_PATH}/${SERVER_IMAGE}:${IMA
 
 printf "${GREEN}Deploying Kubernetes resources${NC}\n"
 kustomize build . | kubectl apply -f -
-kubectl rollout status deployment ${CLIENT_IMAGE}
-kubectl rollout status deployment ${SERVER_IMAGE}
+
+printf "${YELLOW}Waiting for deployments to be visible...${NC}\n"
+sleep 10
+
+kubectl rollout status deployment ${CLIENT_IMAGE}-dep
+kubectl rollout status deployment ${SERVER_IMAGE}-dep
 kubectl get services -o wide

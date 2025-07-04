@@ -8,6 +8,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
+  REGISTRY: europe-north1-docker.pkg.dev
   GCP_REGISTRY_PATH: europe-north1-docker.pkg.dev/paco-learning-project/dwk-repository
   IMAGE: dwk-environments
   SERVICE: dwk-environments
@@ -23,7 +24,8 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v4
 
-      - uses: google-github-actions/auth@v2
+      - name: 'Get GCloud credentials'
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
@@ -33,17 +35,18 @@ jobs:
       - name: 'Use gcloud CLI'
         run: gcloud info
 
-      - name: Configure docker to use the gcloud command-line tool as a credential helper
-        run: gcloud --quiet auth configure-docker
-
       - name: 'Get GKE credentials'
-        uses: google-github-actions/get-gke-credentials@v2
+        uses: 'google-github-actions/get-gke-credentials@v2'
         with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          project_id: ${{ env.PROJECT_ID }}
-          location: ${{ env.GKE_ZONE }}
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
 
-      - run: |-
+      - name: 'Set up Docker Buildx'
+        run: gcloud auth configure-docker "$REGISTRY"
+
+      - name: 'Checking working path'
+        run: |-
           cd project/
           pwd
 

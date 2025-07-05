@@ -29,12 +29,12 @@ jobs:
           install_components: 'gke-gcloud-auth-plugin'
 
       - name: Set kubectl to the right cluster
-        run: |
+        run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
       - name: Delete namespace
-        run: |
-          BRANCH_NAME="${{ github.event.ref#refs/heads/ }}"
+        run: |-
+          BRANCH_NAME="${{ github.event.ref }}"
           NAMESPACE_NAME="${BRANCH_NAME//\//-}"
           echo -e "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
           kubectl delete namespace "$NAMESPACE_NAME" --ignore-not-found

@@ -2,7 +2,16 @@
 
 ### Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the namespace project.
 
-No significant changes were apply to the workflow or the script
+No significant changes were made to the workflow or deployment script, except
+for adding a deployment strategy to the server application to prevent PVC
+conflicts during application updates.
+
+```yaml
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+```
 
 - [main.yaml](../.github/workflows/main.yaml)
 

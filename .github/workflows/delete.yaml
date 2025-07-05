@@ -39,4 +39,5 @@ jobs:
       - name: Delete deployment
         run: |-
           NAMESPACE_NAME=${GITHUB_REF#refs/heads/}
+          printf "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
           kubectl delete namespace "$NAMESPACE_NAME"

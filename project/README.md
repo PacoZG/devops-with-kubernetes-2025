@@ -18,36 +18,34 @@ env:
   GKE_ZONE: europe-north1-b
 
 jobs:
-  build-todo-app:
-    name: Delete
-    runs-on: ubuntu-20.04
+  delete-env:
+    name: Delete branch
+    runs-on: ubuntu-latest
 
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
 
-      - name: 'Get GCloud credentials'
+      - name: Authenticate with GCloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
-      - name: 'Use gcloud CLI'
-        run: gcloud info
-
-      - name: 'Get GKE credentials'
-        uses: 'google-github-actions/get-gke-credentials@v2'
+      - name: Set up gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
         with:
-          cluster_name: '${{ env.GKE_CLUSTER }}'
-          project_id: '${{ env.PROJECT_ID }}'
-          location: '${{ env.GKE_ZONE }}'
+          project_id: ${{ env.PROJECT_ID }}
+          install_components: 'gke-gcloud-auth-plugin'
 
       - name: Set kubectl to the right cluster
         run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
-      - name: Delete deployment
+      - name: Delete namespace
         run: |-
-          NAMESPACE_NAME=${GITHUB_REF#refs/heads/}
-          printf "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
-          kubectl delete namespace "$NAMESPACE_NAME"
+          BRANCH_NAME="${{ github.event.ref }}"
+          NAMESPACE_NAME="${BRANCH_NAME//\//-}"
+          echo -e "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
+          kubectl delete namespace "$NAMESPACE_NAME" --ignore-not-found
+
 ```

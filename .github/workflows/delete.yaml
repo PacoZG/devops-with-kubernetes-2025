@@ -9,7 +9,7 @@ env:
   GKE_ZONE: europe-north1-b
 
 jobs:
-  build-todo-app:
+  delete-env:
     name: Delete branch
     runs-on: ubuntu-latest
 
@@ -17,22 +17,24 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v4
 
-      - name: 'Set up Cloud SDK'
+      - name: Authenticate with GCloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ secrets.GKE_PROJECT }}
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
-          export_default_credentials: true
-
-      - name: 'Use gcloud CLI'
-        run: gcloud info
+          project_id: ${{ env.PROJECT_ID }}
+          install_components: 'gke-gcloud-auth-plugin'
 
       - name: Set kubectl to the right cluster
-        run: |-
+        run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
-      - name: Delete deployment
-        run: |-
-          NAMESPACE_NAME=${{ github.event.ref }}
-          printf "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
-          kubectl delete namespace "$NAMESPACE_NAME"
+      - name: Delete namespace
+        run: |
+          BRANCH_NAME="${{ github.event.ref#refs/heads/ }}"
+          NAMESPACE_NAME="${BRANCH_NAME//\//-}"
+          echo -e "\033[1;33mDeleting namespace: $NAMESPACE_NAME\033[0m"
+          kubectl delete namespace "$NAMESPACE_NAME" --ignore-not-found

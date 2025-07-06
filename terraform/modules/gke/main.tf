@@ -1,4 +1,3 @@
-# modules/gke/main.tf
 
 # Define the GKE cluster itself
 resource "google_container_cluster" "primary" {
@@ -6,8 +5,8 @@ resource "google_container_cluster" "primary" {
   location = var.zone
 
   min_master_version       = var.cluster_version
-  remove_default_node_pool = true # Recommended if you define your own node pools
-  initial_node_count       = 1    # Can be 0 if remove_default_node_pool is true and you rely on custom node pools
+  remove_default_node_pool = true
+  initial_node_count       = 1
 }
 
 # Define a specific node pool within the GKE cluster

@@ -123,17 +123,18 @@ spec:
                 - -c
                 - |
                   export BACKUP_FILE="/tmp/todo-backup-$(date +%Y-%m-%d).sql"
-                  pg_dump -U $PGUSER -h $PGHOST -d todo > $BACKUP_FILE
+                  pg_dump -U "${POSTGRES_USER}" -h "${POSTGRES_HOST}" -d "${POSTGRES_DB}" > "${BACKUP_FILE}"
                   gcloud auth activate-service-account --key-file /secrets/key.json
-                  gsutil cp $BACKUP_FILE gs://todo-db-backups/
+                  gsutil cp "${BACKUP_FILE}" gs://todo-db-backups/
+                  echo "Backup completed: ${BACKUP_FILE} uploaded to gs://todo-db-backups"
               volumeMounts:
-                - name: gcs-creds
+                - name: gcs-backup-key-volume
                   mountPath: /secrets
                   readOnly: true
           restartPolicy: OnFailure
           volumes:
-            - name: gcs-creds
+            - name: gcs-backup-key-volume
               secret:
-                secretName: gcs-creds
-
+                secretName: gcs-backup-key
+                optional: false
 ```

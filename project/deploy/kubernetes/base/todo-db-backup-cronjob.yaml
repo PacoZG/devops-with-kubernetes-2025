@@ -4,7 +4,7 @@ metadata:
   name: todo-db-backup
   namespace: project
 spec:
-  schedule: "0 6 * * *"
+  schedule: "0 6 * * *" # Every 24 hours at 6:00
   jobTemplate:
     spec:
       template:

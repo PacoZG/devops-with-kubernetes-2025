@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: todo-db-backup
+  namespace: project
+spec:
+  schedule: "0 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup
+              image: google/cloud-sdk:slim
+              env:
+                - name: POSTGRES_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config-map-variables
+                      key: postgres-host
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: username
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: project-secret
+                      key: postgres-password
+                - name: GOOGLE_APPLICATION_CREDENTIALS
+                  value: /secrets/key.json
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  export BACKUP_FILE="/tmp/todo-backup-$(date +%Y-%m-%d).sql"
+                  pg_dump -U $PGUSER -h $PGHOST -d todo > $BACKUP_FILE
+                  gcloud auth activate-service-account --key-file /secrets/key.json
+                  gsutil cp $BACKUP_FILE gs://todo-db-backups/
+              volumeMounts:
+                - name: gcs-creds
+                  mountPath: /secrets
+                  readOnly: true
+          restartPolicy: OnFailure
+          volumes:
+            - name: gcs-creds
+              secret:
+                secretName: gcs-creds

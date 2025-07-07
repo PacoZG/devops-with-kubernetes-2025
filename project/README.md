@@ -1,90 +1,139 @@
-# Exercise 3.9: DBaaS vs DIY
+# Exercise 3.10: The project, step 18
 
-### Finally, create a new workflow so that deleting a branch deletes the environment
+#### Create now a CronJob that makes a backup of your todo database (once per 24 hours) and saves it to Google Object Storage(opens in a new tab).
 
-After reading through part of the documentations, google research and personal
-experience, this is some of the PROs and CONs of using either of the database
-solutions.
+#### In this exercise, you can create the secret for the cloud access from the command line, thus, there is no need to create it in the GitHub action.
 
-Choosing between **Google Cloud SQL** and **self-managed PostgreSQL on GKE**
-depends on your goals, resources, and workload requirements. Below is a detailed
-pros and cons breakdown for both options.
+# 🛠️ GCP Postgres Backup Setup – Command Explanations
 
----
-
-### ☁️ Google Cloud SQL (Managed DBaaS)
-
-#### Pros
-
-- ✅ **Quick setup** — Deploy in minutes via console or CLI
-- ✅ **Fully managed** — Google handles patching, upgrades, backups, and
-  maintenance
-- ✅ **Built-in High Availability** — Regional instances with automated
-  failover (~60s downtime)
-- ✅ **Point-in-Time Recovery (PITR)** — Automated WAL-based backups with minimal
-  config
-- ✅ **Security-first** — IAM integration, private IP, automatic OS patching
-- ✅ **Low operational overhead** — No dedicated DBA (Database Administrator) or
-  SRE (Site Reliability Engineer) required
-- ✅ **Easy monitoring & logging** — Integrated with Cloud Monitoring and Cloud
-  Logging
-- ✅ **Faster time-to-market** — Teams focus on app development, not database ops
-
-#### Cons
-
-- ❌ **Higher direct costs** — Pay for CPU, memory, storage, and backup
-  separately
-- ❌ **Limited control** — No access to superuser, limited PostgreSQL extensions
-- ❌ **Vendor lock-in** — Heavily integrated with Google Cloud services
-- ❌ **Manual intervention for major upgrades** — No in-place version upgrades
+This document explains each command used to create and configure a service
+account for backing up a Postgres database to Google Cloud Storage (GCS), and
+exposing the credentials to Kubernetes.
 
 ---
 
-### ⚙️ Self-Managed PostgreSQL on GKE (with PVCs & Operators)
+### 1. Set Project ID
 
-#### Pros
+```shell
+  export PROJECT_ID=paco-learning-project
+```
 
-- ✅ **Full control** — Customize PostgreSQL versions, configs, and extensions
-- ✅ **Kubernetes-native** — Integrates naturally with GKE workloads and CI/CD
-- ✅ **No vendor lock-in** — Easier migration across clouds or on-prem
-- ✅ **Lower infra costs** — No Cloud SQL premium pricing; uses open-source
-  tooling
-- ✅ **Custom storage & scaling** — Choose disk types, sizes, node pools
-- ✅ **Use of operators** — Automate backups, HA, PITR with tools like
-  CloudNativePG or Crunchy
+Sets the active GCP project ID in an environment variable to use in later
+commands.
 
-#### Cons
+### 2. Create a Service Account
 
-- ❌ **Complex setup** — Requires YAMLs for PVCs, StatefulSets, services,
-  Operator install
-- ❌ **Full responsibility for maintenance** — Upgrades, backups, failover,
-  tuning, monitoring
-- ❌ **Manual backups & PITR** — Must configure WAL archiving and external
-  storage
-- ❌ **Security burden** — You manage access control, patching, secrets,
-  encryption
-- ❌ **Higher TCO in production** — Operational load often outweighs infra
-  savings
-- ❌ **Requires advanced expertise** — PostgreSQL + Kubernetes + DevOps + Cloud
-  security
+```shell
+  gcloud iam service-accounts create db-backup-agent \
+    --display-name "Postgres Backup Agent"
+```
 
----
+Creates a new service account named `db-backup-agent` for running backup tasks.
 
-While self-managed PostgreSQL on GKE may seem cheaper at first glance, the
-hidden cost lies in ongoing operations. Maintaining the database requires a team
-of highly skilled Database Administrators (DBAs), Site Reliability Engineers (
-SREs), and Kubernetes experts, whose time and expertise come at a premium. In
-many cases, these operational costs can match or even exceed those of using a
-managed solution like Cloud SQL, making the self-managed approach difficult to
-justify unless full control is a critical requirement.
+### 3. Grant Storage Permissions
 
-### 🧠 TL;DR: When to Use What?
+```shell
+  gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:db-backup-agent@$PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/storage.objectAdmin"
+```
 
-| Use Case                         | Recommended Option  |
-|----------------------------------|---------------------|
-| Fast setup with minimal ops      | ✅ Google Cloud SQL  |
-| Full DB customization and tuning | ✅ PostgreSQL on GKE |
-| Mission-critical HA + PITR       | ✅ Google Cloud SQL  |
-| Kubernetes-native tooling        | ✅ PostgreSQL on GKE |
-| Lower-cost dev/test environments | ✅ PostgreSQL on GKE |
-| No dedicated DB ops team         | ✅ Google Cloud SQL  |
+Grants the service account permission to read and write objects in GCS buckets.
+
+### 4. Create a Service Account Key
+
+```shell
+  gcloud iam service-accounts keys create key.json \
+    --iam-account=db-backup-agent@$PROJECT_ID.iam.gserviceaccount.com
+```
+
+Generates a private key (`key.json`) for authenticating as the service account.
+
+### 5. Grant GCS Bucket Permissions
+
+```shell
+  gsutil iam ch serviceAccount:db-backup-agent@paco-learning-project.iam.gserviceaccount.com:objectCreator gs://todo-db-backups
+```
+
+Gives the service account permission to **upload files** to the GCS bucket.
+
+```shell
+  gsutil iam ch serviceAccount:db-backup-agent@paco-learning-project.iam.gserviceaccount.com:objectViewer gs://todo-db-backups
+```
+
+Gives the service account permission to **read/download files** from the GCS
+bucket.
+
+### 6. Recreate Service Account Key
+
+```shell
+  gcloud iam service-accounts keys create key.json \
+    --iam-account=db-backup-agent@paco-learning-project.iam.gserviceaccount.com
+```
+
+Re-generates the key file if needed again (e.g., if lost or rotated).
+
+### 7. Create Kubernetes Secret from Key
+
+```shell
+  kubectl create secret generic --dry-run=client --output=yaml --from-file="key.json" \
+    --type=Opaque > "db-backup-svc-account-key.yaml"
+```
+
+Creates a Kubernetes Secret YAML file with the service account key to mount in
+backup jobs.
+
+The following is the cronjob created for this purpose:
+[todo-db-backup-cronjob.yaml](deploy/kubernetes/base/todo-db-backup-cronjob.yaml)
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: todo-db-backup
+  namespace: project
+spec:
+  schedule: "0 6 * * *" # Every 24 hours at 6:00
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup
+              image: google/cloud-sdk:slim
+              env:
+                - name: POSTGRES_DB
+                  value: postgres
+                - name: POSTGRES_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: config-map-variables
+                      key: postgres-host
+                - name: POSTGRES_USER
+                  value: postgres
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: project-secret
+                      key: postgres-password
+                - name: GOOGLE_APPLICATION_CREDENTIALS
+                  value: /secrets/key.json
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  export BACKUP_FILE="/tmp/todo-backup-$(date +%Y-%m-%d).sql"
+                  pg_dump -U $PGUSER -h $PGHOST -d todo > $BACKUP_FILE
+                  gcloud auth activate-service-account --key-file /secrets/key.json
+                  gsutil cp $BACKUP_FILE gs://todo-db-backups/
+              volumeMounts:
+                - name: gcs-creds
+                  mountPath: /secrets
+                  readOnly: true
+          restartPolicy: OnFailure
+          volumes:
+            - name: gcs-creds
+              secret:
+                secretName: gcs-creds
+
+```

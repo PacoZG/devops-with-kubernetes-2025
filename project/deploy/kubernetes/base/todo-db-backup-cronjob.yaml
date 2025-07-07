@@ -13,16 +13,15 @@ spec:
             - name: backup
               image: google/cloud-sdk:slim
               env:
+                - name: POSTGRES_DB
+                  value: postgres
                 - name: POSTGRES_HOST
                   valueFrom:
                     configMapKeyRef:
                       name: config-map-variables
                       key: postgres-host
                 - name: POSTGRES_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: postgres-secret
-                      key: username
+                  value: postgres
                 - name: POSTGRES_PASSWORD
                   valueFrom:
                     secretKeyRef:

@@ -43,9 +43,9 @@ else
   printf "${YELLOW}Kubernetes volume ${PVC_NAME} already exists in namespace ${NAMESPACE_NAME}. Skipping creation.${NC}\n"
 fi
 
-printf "${YELLOW}Checking for secrets.yaml...${NC}\n"
+printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/base/secrets.yaml ]; then
-  printf "${GREEN}Creating secrets.yaml file${NC}\n"
+  printf "${GREEN}Creating secret.yaml file${NC}\n"
   export SOPS_AGE_KEY_FILE="${SCRIPT_DIR}/key.txt"
   sops --decrypt secrets.enc.yaml > kubernetes/base/secrets.yaml
 else

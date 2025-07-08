@@ -56,7 +56,7 @@ printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/base/db-backup-json-key-secret.yaml ]; then
   printf "${GREEN}Creating db-backup-json-key-secret.yaml file${NC}\n"
   export SOPS_AGE_KEY_FILE="${SCRIPT_DIR}/key.txt"
-  sops --decrypt secret.enc.yaml > kubernetes/base/db-backup-json-key-secret.yaml
+  sops --decrypt db-backup-json-key-secret.enc.yaml > kubernetes/base/db-backup-json-key-secret.yaml
 else
   printf "${YELLOW}kubernetes/base/db-backup-json-key-secret.yaml already exists${NC}\n"
 fi

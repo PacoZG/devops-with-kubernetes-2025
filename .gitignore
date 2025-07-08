@@ -3,7 +3,7 @@
 /**/shared/
 /**/.env
 /**/database
-/**/secret.yaml
+/**/*secret.yaml
 /**/**/.terraform/
 /**/**/.terraform*
 /**/**/terraform.tfstate*

@@ -8,6 +8,6 @@ resources:
   - 04-cronJob.yaml
   - 05-ingress.yaml
   - secret.yaml
-  - db-backup-svc-account-key.yaml
+  - db-backup-json-key-secret.yaml
   - todo-db-backup-cronjob.yaml
 namespace: project

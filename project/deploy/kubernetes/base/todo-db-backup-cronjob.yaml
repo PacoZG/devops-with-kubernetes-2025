@@ -45,5 +45,5 @@ spec:
           volumes:
             - name: gcs-backup-key-volume
               secret:
-                secretName: gcs-backup-key
+                secretName: project-secrets
                 optional: false

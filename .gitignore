@@ -4,6 +4,7 @@
 /**/.env
 /**/database
 /**/*secret.yaml
+/**/*secrets.yaml
 /**/**/.terraform/
 /**/**/.terraform*
 /**/**/terraform.tfstate*

@@ -44,21 +44,12 @@ else
 fi
 
 printf "${YELLOW}Checking for secret.yaml...${NC}\n"
-if [ ! -f kubernetes/base/secret.yaml ]; then
+if [ ! -f kubernetes/base/secrets.yaml ]; then
   printf "${GREEN}Creating secret.yaml file${NC}\n"
   export SOPS_AGE_KEY_FILE="${SCRIPT_DIR}/key.txt"
-  sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
+  sops --decrypt secrets.enc.yaml > kubernetes/base/secrets.yaml
 else
-  printf "${YELLOW}kubernetes/base/secret.yaml already exists${NC}\n"
-fi
-
-printf "${YELLOW}Checking for secret.yaml...${NC}\n"
-if [ ! -f kubernetes/base/db-backup-json-key-secret.yaml ]; then
-  printf "${GREEN}Creating db-backup-json-key-secret.yaml file${NC}\n"
-  export SOPS_AGE_KEY_FILE="${SCRIPT_DIR}/key.txt"
-  sops --decrypt db-backup-json-key-secret.enc.yaml > kubernetes/base/db-backup-json-key-secret.yaml
-else
-  printf "${YELLOW}kubernetes/base/db-backup-json-key-secret.yaml already exists${NC}\n"
+  printf "${YELLOW}kubernetes/base/secrets.yaml already exists${NC}\n"
 fi
 
 printf "${YELLOW}Setting images via kustomize${NC}\n"

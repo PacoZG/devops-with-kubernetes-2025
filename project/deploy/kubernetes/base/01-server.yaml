@@ -40,7 +40,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: project-secret
+                  name: project-secrets
                   key: postgres-password
           volumeMounts:
             - name: shared-files
@@ -60,10 +60,10 @@ metadata:
   name: server-svc
   namespace: project
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: server
   ports:
-    - port: 80
+    - port: 30081
       protocol: TCP
       targetPort: 3001

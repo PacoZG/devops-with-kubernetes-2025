@@ -15,18 +15,18 @@ spec:
               service:
                 name: client-svc
                 port:
-                  number: 80
+                  number: 30081
           - path: /api/image
             pathType: Prefix
             backend:
               service:
                 name: server-svc
                 port:
-                  number: 80
+                  number: 30081
           - path: /api/todos
             pathType: Prefix
             backend:
               service:
                 name: server-svc
                 port:
-                  number: 80
+                  number: 30081

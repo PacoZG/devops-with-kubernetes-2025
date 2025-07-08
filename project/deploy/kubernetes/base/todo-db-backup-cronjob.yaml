@@ -25,7 +25,7 @@ spec:
                 - name: POSTGRES_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: project-secret
+                      name: project-secrets
                       key: postgres-password
                 - name: GOOGLE_APPLICATION_CREDENTIALS
                   value: /secrets/key.json

@@ -53,12 +53,12 @@ jobs:
         run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
 
       - name: 'Build Reader Image'
-        working-directory: pingpong-log-output/log-output
+        working-directory: pingpong-log-output/log_output
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" ./reader
 
       - name: 'Build Writer Image'
-        working-directory: pingpong-log-output/log-output
+        working-directory: pingpong-log-output/log_output
         run: |-
           docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG"  ./generator
 

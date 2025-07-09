@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid'
 import getAllTodos from '../db/getAllTodos.js'
 import storeTodo from '../db/storeTodo.js'
 import getTodo from '../db/getTodo.js'
-import checkDbConnection from '../db/checkDbConnection.js'
 
 const todoappRouter = Router()
 
@@ -45,22 +44,6 @@ todoappRouter.post('/', async (req, res) => {
   } catch (error) {
     console.error('[ERROR] Creating new todo:', error.message)
     res.status(500).json({ error: 'Failed to create todo' })
-  }
-})
-
-todoappRouter.get('/healthz', async (_, res) => {
-  try {
-    const isDbConnected = await checkDbConnection()
-    if (isDbConnected) {
-      console.log(`Received a request to healthz and responding with status 200`)
-      res.status(200).send('Application ready')
-    } else {
-      console.log(`Received a request to healthz and responding with status 500 - DB not connected`)
-      res.status(500).send('Application not Ready - Database connection failed')
-    }
-  } catch (error) {
-    console.error(`[ERROR] Healthz check failed:`, error.message)
-    res.status(500).send('Application not Ready - Internal server error during health check')
   }
 })
 

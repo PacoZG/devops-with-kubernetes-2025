@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: create-daily-todo-cron-job
-  namespace: project
 spec:
   schedule: "* 8 * * *"
   jobTemplate:

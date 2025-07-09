@@ -1,12 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+  #  - 06-backendConfig.yaml
 resources:
-  - 00-client.yaml
-  - 01-server.yaml
-  - 02-postgres.yaml
-  - 03-configMap.yaml
-  - 04-cronJob.yaml
-  - 05-ingress.yaml
-  - 06-backendConfig.yaml
-  - secrets.yaml
-  - todo-db-backup-cronjob.yaml
+- 00-client.yaml
+- 01-server.yaml
+- 02-postgres.yaml
+- 03-configMap.yaml
+- 04-cronJob.yaml
+- 05-ingress.yaml
+- secrets.yaml
+- todo-db-backup-cronjob.yaml
+namespace: main
+images:
+- name: CLIENT/IMAGE
+  newName: /
+- name: SERVER/IMAGE
+  newName: /

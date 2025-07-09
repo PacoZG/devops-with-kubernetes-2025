@@ -13,7 +13,7 @@ cd deploy
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring 'project' namespace exists...${NC}\n"
-kubectl get namespace project >/dev/null 2>&1 || kubectl apply -f ../kubernetes/namespace
+kubectl get namespace project >/dev/null 2>&1 || kubectl apply -f kubernetes/namespace
 printf "${YELLOW}Setting working namespace...${NC}\n"
 kubectl config set-context --current --namespace=project >/dev/null
 
@@ -34,7 +34,7 @@ fi
 printf "${YELLOW}Checking for secrets.yaml...${NC}\n"
 if [ ! -f kubernetes/base/secrets.yaml ]; then
   printf "${GREEN}Creating secrets.yaml file${NC}\n"
-  export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
+  export SOPS_AGE_KEY_FILE=./key.txt
   sops --decrypt secrets.enc.yaml > kubernetes/base/secrets.yaml
 else
   printf "${YELLOW}kubernetes/base/secrets.yaml already exists${NC}\n"

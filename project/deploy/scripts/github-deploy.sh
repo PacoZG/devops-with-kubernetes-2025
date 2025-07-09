@@ -68,6 +68,6 @@ kustomize build . | kubectl apply -f -
 printf "${YELLOW}Waiting for deployments to be visible...${NC}\n"
 sleep 5
 
-kubectl rollout status deployment ${CLIENT_IMAGE}-dep
-kubectl rollout status deployment ${SERVER_IMAGE}-dep
+kubectl rollout status deployment "${CLIENT_IMAGE}-dep"
+kubectl rollout status deployment "${SERVER_IMAGE}-dep"
 kubectl get services -o wide

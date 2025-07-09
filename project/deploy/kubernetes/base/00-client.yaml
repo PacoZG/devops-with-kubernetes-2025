@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: sirpacoder/client:v3.5
+          image: CLIENT/IMAGE
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL

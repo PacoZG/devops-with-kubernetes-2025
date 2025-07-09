@@ -14,6 +14,11 @@ printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring 'project' namespace exists...${NC}\n"
 kubectl get namespace project >/dev/null 2>&1 || kubectl apply -f ../kubernetes/namespace
+printf "${YELLOW}Setting working namespace...${NC}\n"
+kubectl config set-context --current --namespace=project >/dev/null
+
+CURRENT_NS=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+printf "${GREEN}Current namespace: ${CURRENT_NS}${NC}\n"
 
 PVC_NAME="project-files-claim" # Ensure this matches the metadata.name in your persistentvolumeclaim.yaml
 

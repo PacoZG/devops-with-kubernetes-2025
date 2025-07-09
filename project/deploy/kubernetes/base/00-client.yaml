@@ -17,8 +17,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              value: ""
-          #              value: http://localhost:8081 # For local deployment
+              value: http://localhost:8081 # For local deployment
           resources:
             requests:
               memory: '64Mi'
@@ -37,6 +36,6 @@ spec:
   selector:
     app: client
   ports:
-    - port: 80
+    - port: 30081
       protocol: TCP
       targetPort: 3000

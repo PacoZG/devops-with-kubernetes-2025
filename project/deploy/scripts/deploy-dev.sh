@@ -54,6 +54,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+printf "${YELLOW}Waiting for deployments to be visible...${NC}\n"
+sleep 10
+
 kubectl rollout status deployment client-dep
 kubectl rollout status deployment server-dep
 kubectl get services -o wide

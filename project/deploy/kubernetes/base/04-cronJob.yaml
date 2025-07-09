@@ -14,7 +14,7 @@ spec:
               command: [ "/bin/sh", "/etc/config/scripts/create-daily-todo.sh" ]
               env:
                 - name: SERVER_URL
-                  value: http://server-svc:80
+                  value: http://server-svc:30081
               volumeMounts:
                 - name: todo-script
                   mountPath: /etc/config/scripts

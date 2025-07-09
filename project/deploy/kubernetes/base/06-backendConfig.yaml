@@ -1,10 +1,10 @@
-apiVersion: cloud.google.com/v1
-kind: BackendConfig
-metadata:
-  name: server-http-hc-config
-spec:
-  healthCheck:
-    checkIntervalSec: 15
-    port: 3001
-    type: HTTP
-    requestPath: /healthz
+#apiVersion: cloud.google.com/v1
+#kind: BackendConfig
+#metadata:
+#  name: server-http-hc-config
+#spec:
+#  healthCheck:
+#    checkIntervalSec: 15
+#    port: 3001
+#    type: HTTP
+#    requestPath: /healthz

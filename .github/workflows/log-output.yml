@@ -2,14 +2,103 @@ name: log-output
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+'
+
+env:
+  BRANCH: ${{ github.ref_name }}
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  REGISTRY: europe-north1-docker.pkg.dev
+  GCP_REGISTRY_PATH: europe-north1-docker.pkg.dev/paco-learning-project/dwk-repository
+  IMAGE: dwk-environments
+  SERVICE: dwk-environments
+  HASH_READER_IMAGE: hash-reader
+  HASH_GENERATOR_IMAGE: hash-generator
+  PINGPONG_IMAGE: pingpong
 
 jobs:
-  example-job:
+  project-build-publish-deploy:
+    name: Build, Publish and Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Print Tag
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'Get GCloud credentials'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: 'Set up Docker Buildx'
+        run: gcloud auth configure-docker "$REGISTRY"
+
+      - name: 'Verify current working directory (should be repo root)'
+        run: pwd
+
+      - name: "Set tag based on branch"
+        run: echo "IMAGE_TAG=$BRANCH-$GITHUB_SHA" >> $GITHUB_ENV
+
+      - name: 'Build Reader Image'
+        working-directory: pingpong-log-output
         run: |-
-          echo "Tag event ref triggered: ${{ github.event.ref }}"
-          echo "Tag ref triggered: ${{ github.ref }}"
+          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" ./hash_reader
+
+      - name: 'Build Writer Image'
+        working-directory: pingpong-log-output
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" ./hash-generator
+
+      - name: 'Build Pingpong Image'
+        working-directory: pingpong-log-output
+        run: |-
+          docker build --tag "$GCP_REGISTRY_PATH/$PINGPONG_IMAGE:$IMAGE_TAG" ./pingpong
+
+      - name: 'Publish Reader Image'
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG"
+
+      - name: 'Publish Writer Image'
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$HASH_GENERATOR_IMAGE:$IMAGE_TAG"
+
+      - name: 'Publish Pingpong Image'
+        run: |-
+          docker push "$GCP_REGISTRY_PATH/$PINGPONG_IMAGE:$IMAGE_TAG"
+
+      - name: 'Set up Kustomize'
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Setup SOPS
+        uses: nhedger/setup-sops@v2
+        with:
+          version: 'latest'
+
+      - name: 'Make deploy.sh executable'
+        run: chmod +x pingpong-log-output/deploy/scripts/github-deploy.sh
+
+
+      - name: 'Run deployment script'
+        working-directory: pingpong-log-output/deploy/scripts
+        run: |-
+          NAMESPACE_NAME=${GITHUB_REF#refs/heads/}
+          ./github-deploy.sh -n "$NAMESPACE_NAME"
+        env:
+          GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}
+          HASH_READER_IMAGE: ${{ env.HASH_READER_IMAGE }}
+          HASH_GENERATOR_IMAGE: ${{ env.HASH_GENERATOR_IMAGE }}
+          PINGPONG_IMAGE: ${{ env.PINGPONG_IMAGE }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}

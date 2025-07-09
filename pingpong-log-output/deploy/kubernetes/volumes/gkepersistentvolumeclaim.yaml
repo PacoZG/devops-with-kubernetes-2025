@@ -2,9 +2,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pingpong-files-claim
+  namespace: main
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
@@ -13,9 +14,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: log-output-files-claim
+  namespace: main
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi

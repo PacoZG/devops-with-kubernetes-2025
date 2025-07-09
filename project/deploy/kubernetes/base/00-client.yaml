@@ -18,7 +18,8 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              value: http://localhost:8081
+              value: ""
+          #              value: http://localhost:8081 # For local deployment
           resources:
             requests:
               memory: '64Mi'
@@ -34,10 +35,10 @@ metadata:
   name: client-svc
   namespace: project
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: client
   ports:
-    - port: 30081
+    - port: 80
       protocol: TCP
       targetPort: 3000

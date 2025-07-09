@@ -55,12 +55,12 @@ jobs:
       - name: 'Build Reader Image'
         working-directory: pingpong-log-output/log-output
         run: |-
-          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" Dockerfile.reader
+          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" -f Dockerfile.reader .
 
       - name: 'Build Writer Image'
         working-directory: pingpong-log-output
         run: |-
-          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" Dockerfile.generator
+          docker build --tag "$GCP_REGISTRY_PATH/$HASH_READER_IMAGE:$IMAGE_TAG" -f Dockerfile.generator .
 
       - name: 'Build Pingpong Image'
         working-directory: pingpong-log-output

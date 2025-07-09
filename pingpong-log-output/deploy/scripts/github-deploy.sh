@@ -47,9 +47,9 @@ printf "${YELLOW}Checking for secret.yaml...${NC}\n"
 if [ ! -f kubernetes/base/secret.yaml ]; then
   printf "${GREEN}Creating secret.yaml file${NC}\n"
   export SOPS_AGE_KEY_FILE="${SCRIPT_DIR}/key.txt"
-  sops --decrypt secrets.enc.yaml > kubernetes/base/secret.yaml
+  sops --decrypt secret.enc.yaml > kubernetes/base/secret.yaml
 else
-  printf "${YELLOW}kubernetes/base/secrets.yaml already exists${NC}\n"
+  printf "${YELLOW}kubernetes/base/secret.yaml already exists${NC}\n"
 fi
 
 printf "${YELLOW}Setting images via kustomize${NC}\n"

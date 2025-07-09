@@ -1,44 +1,31 @@
-#apiVersion: networking.k8s.io/v1
-#kind: Ingress
-#metadata:
-#  name: pingpong-log-output-ingress
-#  namespace: exercises
-#  labels:
-#    name: pingpong-log-output
-#spec:
-#  rules:
-#    - http:
-#        paths:
-#          - path: /
-#            pathType: Prefix
-#            backend:
-#              service:
-#                name: log-output-svc
-#                port:
-#                  number: 80
-#          - path: /pingpong
-#            pathType: Prefix
-#            backend:
-#              service:
-#                name: pingpong-svc
-#                port:
-#                  number: 80
-#          - path: /reset
-#            pathType: Prefix
-#            backend:
-#              service:
-#                name: pingpong-svc
-#                port:
-#                  number: 80
-#
-#---
-#apiVersion: cloud.google.com/v1
-#kind: BackendConfig
-#metadata:
-#  name: http-hc-config
-#spec:
-#  healthCheck:
-#    checkIntervalSec: 15
-#    port: 8000
-#    type: HTTP
-#    requestPath: /healthz
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pingpong-log-output-ingress
+  labels:
+    name: pingpong-log-output
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: log-output-svc
+                port:
+                  number: 80
+          - path: /pingpong
+            pathType: Prefix
+            backend:
+              service:
+                name: pingpong-svc
+                port:
+                  number: 80
+          - path: /reset
+            pathType: Prefix
+            backend:
+              service:
+                name: pingpong-svc
+                port:
+                  number: 80

@@ -14,6 +14,12 @@ printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
 kubectl get namespace exercises >/dev/null 2>&1 || kubectl apply -f ../kubernetes/namespace
+printf "${YELLOW}Setting working namespace...${NC}\n"
+kubectl config set-context --current --namespace=exercises >/dev/null
+
+CURRENT_NS=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+printf "${GREEN}Current namespace: ${CURRENT_NS}${NC}\n"
+
 
 PVC_NAME="pingpong-files-claim" # Ensure this matches the metadata.name in your persistentvolumeclaim.yaml
 

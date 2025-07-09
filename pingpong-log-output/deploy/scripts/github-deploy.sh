@@ -28,7 +28,11 @@ printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring '${NAMESPACE_NAME}' namespace exists...${NC}\n"
 kubectl create namespace "${NAMESPACE_NAME}" || true
-kubectl config set-context --current --namespace="${NAMESPACE_NAME}"
+printf "${YELLOW}Setting working namespace...${NC}\n"
+kubectl config set-context --current --namespace="${NAMESPACE_NAME}" >/dev/null
+
+CURRENT_NS=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+printf "${GREEN}Current namespace: ${CURRENT_NS}${NC}\n"
 
 printf "${BLUE}Navigating to project/deploy directory${NC}\n"
 cd "$SCRIPT_DIR/.."

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: log-output-dep
-  namespace: exercises
 spec:
   replicas: 1
   strategy:
@@ -56,7 +55,7 @@ spec:
             - name: INFORMATION_FILE_PATH
               value: /usr/src/app/reader/info/information.txt
             - name: PING_SERVER_URL
-              value: ""
+              value: http://pingpong-svc:80
             - name: MESSAGE
               valueFrom:
                 configMapKeyRef:
@@ -86,7 +85,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: log-output-svc
-  namespace: main
 spec:
   type: NodePort
   selector:

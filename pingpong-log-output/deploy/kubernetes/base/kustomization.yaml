@@ -5,7 +5,7 @@ resources:
   - 01-log_output.yaml
   - 02-configMap.yaml
   - 03-postgres.yaml
-  #  - 04-ingress.yaml
-  - 05-gateway.yaml
+  - 04-ingress.yaml
+  #  - 05-gateway.yaml
+  - 06-backendconfig.yaml
   - secret.yaml
-namespace: exercises

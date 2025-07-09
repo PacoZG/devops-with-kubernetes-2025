@@ -3,8 +3,8 @@ services:
     image: hash-generator
     container_name: hash-generator
     build:
-      context: ./log_output
-      dockerfile: Dockerfile.generator
+      context: .
+      dockerfile: log_output/generator/Dockerfile
     environment:
       - GENERATOR_PORT=3002
       - HASH_FILE_PATH=shared/files/hash.txt
@@ -17,8 +17,8 @@ services:
     image: hash-reader
     container_name: hash-reader
     build:
-      context: ./log_output
-      dockerfile: Dockerfile.reader
+      context: .
+      dockerfile: log_output/reader/Dockerfile
     environment:
       - HASH_FILE_PATH=shared/files/hash.txt
       - PING_SERVER_URL=http://pingpong:8000

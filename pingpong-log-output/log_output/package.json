@@ -5,9 +5,9 @@
   "type": "module",
   "main": "src",
   "scripts": {
-    "generator": "node generator/index.js",
-    "reader": "node reader/index.js",
-    "dev": "nodemon src/generator/index.js & nodemon src/reader/index.js"
+    "generator": "node src/index.js",
+    "reader": "node src/index.js",
+    "dev": "nodemon generator/src/index.js & nodemon reader/src/index.js"
   },
   "author": "Pacoder",
   "license": "ISC",

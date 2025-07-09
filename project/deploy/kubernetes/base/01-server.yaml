@@ -69,7 +69,7 @@ kind: Service
 metadata:
   name: server-svc
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: server
   ports:

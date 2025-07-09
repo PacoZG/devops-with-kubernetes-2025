@@ -96,7 +96,7 @@ jobs:
       - name: 'Run deployment script'
         working-directory: pingpong-log-output/deploy/scripts
         run: |-
-          NAMESPACE_NAME=${GITHUB_REF#refs/heads/}
+          NAMESPACE_NAME="log-output-${GITHUB_REF#refs/heads/}"
           ./github-deploy.sh -n "$NAMESPACE_NAME"
         env:
           GCP_REGISTRY_PATH: ${{ env.GCP_REGISTRY_PATH }}

@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print Tag
-        run:
-          - |
-            echo "Tag event ref triggered: ${{ github.event.ref }}"
-            echo "Tag ref triggered: ${{ github.ref }}"
+        run: |-
+          echo "Tag event ref triggered: ${{ github.event.ref }}"
+          echo "Tag ref triggered: ${{ github.ref }}"

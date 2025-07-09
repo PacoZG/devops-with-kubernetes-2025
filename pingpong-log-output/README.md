@@ -1,73 +1,84 @@
-# 🚀 Exercise 3.2: Back to Ingress
+# 🚀 Exercise 4.1: Readines probe
 
-### 🎯 Goal
+# ✅ Kubernetes Readiness Probes for Applications
 
-Deploy the **Pingpong application** into a **Google Kubernetes Engine (GKE)**
-cluster, exposing it with a **LoadBalancer service**.
+## 🏓 1. Ping-pong Application
 
-Deploy the **Log output** and **Ping-pong** applications into **Google
-Kubernetes Engine (GKE)** and expose it with __Ingress__.
+- **Goal**: The app should only be marked *ready* when it can successfully
+  connect to the **PostgreSQL database**.
+- **Implementation**:
+  Add a `readinessProbe` that checks DB connectivity via an HTTP endpoint (e.g.,
+  `/healthz`).
 
-**Ping-pong** will have to respond from `/pingpong` path. This may require you
-to rewrite parts of the code.
+- [pingpong.yaml](deploy/kubernetes/base/00-pingpong.yaml)
+
+  ```yaml
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 10
+  ```
+
+- Ensure the `/healthz` endpoint fails (e.g., returns 500) when the app cannot
+  connect to the database.
 
 ---
 
-## 🛠️ Kubernetes Configuration Updates
+## 📤 2. Log Output Application
 
-I had to rename the manifest files by prefixing them with numbers to ensure that
-the Ingress is created only after the corresponding services and pods are up and
-running.
+- **Goal**: The app should only be marked *ready* when it can receive data from
+  the Ping-pong application.
+- **Implementation**:
+  Add a `readinessProbe` that checks if the Ping-pong service is reachable or
+  that expected data is available.
+
+- [log_output.yaml](deploy/kubernetes/base/01-log_output.yaml)
+
+  ```yaml
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: 3001
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 10
+  ```
+
+- Again, ensure that the endpoint fails (e.g., returns 500) until the Ping-pong
+  app is accessible and functional.
 
 ---
 
-- [04-ingress.yaml](kubernetes/manifests/04-ingress.yaml)
+Also created a backend manifest for GCP to be able to call the endpoint
+
+[backendconfig.yaml](deploy/kubernetes/base/06-backendconfig.yaml)
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
 metadata:
-  name: pingpong-log-output-ingress
-  namespace: exercises
-  labels:
-    name: pingpong-log-output
+  name: pingpong-http-hc-config
 spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: log-output-svc
-                port:
-                  number: 80
-          - path: /pingpong
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 80
-          - path: /reset
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 80
-
-```
-
+  healthCheck:
+    checkIntervalSec: 15
+    port: 8000
+    type: HTTP
+    requestPath: /healthz
 ---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: log-output-http-hc-config
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    port: 3001
+    type: HTTP
+    requestPath: /healthz
 
-## 🔍 Monitoring & Access
-
-Once deployed, you can retrieve the Ingress configuration where the available IP
-route is running the application by running:
-
-```shell
-  kubectl describe ingress pingpong-log-output-ingress -n exercises
 ```
 
 * Note: Ingress routing can take several minutes to become fully active, so
@@ -81,10 +92,13 @@ Alternatively, you can check it from the GCP Console:
 
 ### 🧭 Useful Commands
 
+```shell
+  kubectl get ingress
 ```
-  kubectl get pods
-  kubectl describe pod <pod-id>
-  kubectl logs <pod-id> --since 1h
+
+```
+NAME                          CLASS    HOSTS   ADDRESS          PORTS   AGE
+pingpong-log-output-ingress   <none>   *       35.241.59.104    80      19m
 ```
 
 These help monitor pod status, logs, and troubleshoot any issues.

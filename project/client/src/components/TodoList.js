@@ -156,32 +156,6 @@ const TodoList = () => {
         </>
       )}
 
-      {todos
-        .filter(todo => todo.status === 'done')
-        .map(todo => (
-          <div className={`todo done`} key={todo.id}>
-            <div>
-              <div className="text">
-                {todo.text.includes('<a') ? (
-                  <>
-                    <div>{'Task: Read'}</div>
-                    <div dangerouslySetInnerHTML={{ __html: todo.text }} />
-                  </>
-                ) : (
-                  <>
-                    <div>{'Task:'}</div>
-                    <div className="span">{todo.text}</div>
-                  </>
-                )}
-              </div>
-
-              <div className="status">
-                <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
-              </div>
-            </div>
-          </div>
-        ))}
-
       <footer className="TodoList__footer">
         <a href="https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes">DevOps With Kubernetes 2025</a>{' '}
         University of Helsinki

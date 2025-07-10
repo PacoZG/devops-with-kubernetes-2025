@@ -1,0 +1,20 @@
+{
+  "name": "broadcaster",
+  "version": "1.0.0",
+  "description": "Exercises DevOps with Kubernetes",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "broadcaster": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paco Zavala",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.2.0",
+    "nats": "^2.29.3",
+    "nodemon": "^3.1.10"
+  }
+}

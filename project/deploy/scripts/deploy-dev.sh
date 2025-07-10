@@ -25,8 +25,11 @@ PVC_NAME="project-files-claim" # Ensure this matches the metadata.name in your p
 printf "${YELLOW}Checking for Kubernetes volume: ${PVC_NAME} in namespace 'Project'${NC}\n"
 if ! kubectl get pvc "${PVC_NAME}" --ignore-not-found=true | grep -q "${PVC_NAME}"; then
   printf "${YELLOW}Kubernetes volume ${PVC_NAME} not found. Creating...${NC}\n"
-  kubectl apply -f kubernetes/volumes/persistentvolumeclaim.yaml
   kubectl apply -f kubernetes/volumes/persistentvolume.yaml
+  printf "${YELLOW}Waiting for the volumes to be created...${NC}\n"
+  sleep 10
+
+  kubectl apply -f kubernetes/volumes/persistentvolumeclaim.yaml
 else
   printf "${YELLOW}Kubernetes volume ${PVC_NAME} already exists in namespace 'Project'. Skipping creation.${NC}\n"
 fi

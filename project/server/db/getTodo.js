@@ -1,4 +1,4 @@
-import { pool } from '../db/initDb.js'
+import { pool } from './initDb.js'
 
 const getTodo = async id => {
   try {

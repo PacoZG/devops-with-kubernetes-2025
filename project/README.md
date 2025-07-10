@@ -1,20 +1,68 @@
-# Exercise 4.3. Prometheus
+# Exercise 4.5. The project, step 22
 
-#### Write a query that shows the number of pods created by StatefulSets in prometheus namespace. For the above setup the Value should be 3 different pods
+#### Our todo application could use "Done" field for todos that are already done. It should be a PUT request to /todos/<id>.
 
-Case on which we only get the number of Statefulset
+After creating an endpoint for the backend to handle change on todo status:
 
-![image](./images/stateful_set.png)
+```js
+todoappRouter.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    console.log(`[PATCH] /api/todos/${id} - Updating todo`)
+    const updatedTodo = await updateTodo(id)
+    res.status(200).json(updatedTodo)
+  }
+  catch (error) {
+    console.error(`[ERROR] Updating todo with ID ${req.params.id}:`,
+      error.message)
+    res.status(404).json({ error: 'Todo not found' })
+  }
+})
+```
 
-Case on which we query the information of those pods
+in which `updateTodo` is a function that handles the update in the db
 
-![image](./images/stateful_count.png)
+```js
+import { pool } from './initDb.js'
 
-___
+const updateTodo = async id => {
+  try {
+    const todoToUpdate = await pool.query(`SELECT * FROM todos_table WHERE id = $1`,
+      [id])
 
-### I tested also with the deployment of the `project`
+    if (!todoToUpdate) {
+      console.log(`No todo found with ID: ${id}`)
 
-We can clearly see in the table that it shows the postgress stateful
-![image](./images/postgres_stateful.png)
+      return null
+    }
+
+    const status = todoToUpdate.rows[0].status
+    let newStatus
+
+    if (status === 'not-done') {
+      newStatus = 'done'
+    } else if (status === 'done') {
+      newStatus = 'not-done'
+    }
+
+    const updateTodo = await pool.query(`UPDATE todos_table SET status = $1 WHERE id = $2 RETURNING *`,
+      [newStatus, id])
+
+    return updateTodo.rows[0]
+  }
+  catch (error) {
+    console.error(`Error toggling todo status for ID ${id}:`, error.message)
+
+    return null
+  }
+}
+
+export default updateTodo
+```
+
+and some change on the frontend of the application, the following is a
+screenshot of how the application looks like in the browser.
+![image](./images/project_4.5.png)
+
 
 

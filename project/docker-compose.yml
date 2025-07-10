@@ -38,3 +38,13 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - ./database:/var/lib/postgresql/data
+
+  broadcaster:
+    image: broadcaster
+    container_name: broadcaster
+    build:
+      context: ./broadcaster
+      dockerfile: Dockerfile
+    environment:
+      - DISCORD_URL=${DISCORD_URL}
+

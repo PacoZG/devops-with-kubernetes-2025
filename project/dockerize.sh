@@ -36,9 +36,11 @@ docker-compose build --no-cache
 printf "${YELLOW}Tagging images...\n${NC}" # Step info in yellow
 docker tag client sirpacoder/client:$TAG
 docker tag server sirpacoder/server:$TAG
+docker tag broadcaster sirpacoder/broadcaster:$TAG
 
 printf "${YELLOW}Pushing images...\n${NC}" # Step info in yellow
 docker push sirpacoder/client:$TAG
 docker push sirpacoder/server:$TAG
+docker push sirpacoder/broadcaster:$TAG
 
 printf "${GREEN}Images successfully built and pushed with tag %s!\n${NC}" "$TAG" # Final success in green

@@ -60,8 +60,9 @@ fi
 printf "${YELLOW}Waiting for deployments to be visible...${NC}\n"
 sleep 10
 
-kubectl rollout status deployment client-dep
+kubectl rollout status deployment broadcaster-dep
 kubectl rollout status deployment server-dep
+kubectl rollout status deployment client-dep
 kubectl get services -o wide
 
 printf "${GREEN}Deployment successfully completed${NC}\n"

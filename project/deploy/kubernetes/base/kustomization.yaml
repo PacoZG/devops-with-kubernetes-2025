@@ -2,16 +2,22 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 #  - 06-backendConfig.yaml
 resources:
-  - 00-client.yaml
-  - 01-server.yaml
-  - 02-postgres.yaml
-  - 03-configMap.yaml
+  - 01-postgres.yaml
+  - 02-server.yaml
+  - 03-client.yaml
   - 04-cronJob.yaml
-  - 05-ingress.yaml
+  - 05-todo-db-backup-cronjob.yaml
+  - 06-configMap.yaml
+  - 07-ingress.yaml
+  - 00-broadcaster.yaml
   - secrets.yaml
-  - todo-db-backup-cronjob.yaml
 images:
   - name: CLIENT/IMAGE
-    newName: sirpacoder/client:v4.5
+    newName: sirpacoder/client
+    newTag: v4.6
   - name: SERVER/IMAGE
-    newName: sirpacoder/server:v4.5
+    newName: sirpacoder/server
+    newTag: v4.6
+  - name: BROADCASTER/IMAGE
+    newName: sirpacoder/broadcaster
+    newTag: v4.6

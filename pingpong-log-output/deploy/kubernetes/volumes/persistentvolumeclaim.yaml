@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pingpong-files-claim
+  namespace: exercises
 spec:
   storageClassName: manual
   accessModes:
@@ -14,7 +15,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: log-output-files-claim
+  namespace: exercises
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

@@ -13,7 +13,7 @@ cd deploy
 printf "${BLUE}Running Kubernetes deployments script${NC}\n"
 
 printf "${YELLOW}Ensuring 'exercises' namespace exists...${NC}\n"
-kubectl get namespace exercises >/dev/null 2>&1 || kubectl apply -f ../kubernetes/namespace
+kubectl get namespace exercises >/dev/null 2>&1 || kubectl apply -f kubernetes/namespace
 printf "${YELLOW}Setting working namespace...${NC}\n"
 kubectl config set-context --current --namespace=exercises >/dev/null
 
@@ -54,6 +54,9 @@ if [ $? -ne 0 ]; then
   printf "${RED}Error: Failed to apply Kubernetes manifests${NC}\n"
   exit 1
 fi
+
+printf "${YELLOW}Waiting for deployments to be visible...${NC}\n"
+sleep 10
 
 kubectl rollout status deployment pingpong-dep
 kubectl rollout status deployment log-output-dep

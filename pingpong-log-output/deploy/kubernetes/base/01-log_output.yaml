@@ -55,7 +55,7 @@ spec:
             - name: INFORMATION_FILE_PATH
               value: /usr/src/app/reader/info/information.txt
             - name: PING_SERVER_URL
-              value: http://pingpong-svc:80
+              value: http://pingpong-svc:30081
             - name: MESSAGE
               valueFrom:
                 configMapKeyRef:
@@ -86,10 +86,10 @@ kind: Service
 metadata:
   name: log-output-svc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: log-output
   ports:
-    - port: 80
+    - port: 30081
       protocol: TCP
       targetPort: 3001

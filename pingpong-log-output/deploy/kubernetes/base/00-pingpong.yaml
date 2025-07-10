@@ -32,6 +32,12 @@ spec:
             httpGet:
               path: /healthz
               port: 8000
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            httpGet:
+              path: /healthz
+              port: 8000
           env:
             - name: PORT
               value: "8000"
@@ -56,11 +62,11 @@ kind: Service
 metadata:
   name: pingpong-svc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: pingpong
   ports:
     - name: http
-      port: 80
+      port: 30081
       protocol: TCP
       targetPort: 8000

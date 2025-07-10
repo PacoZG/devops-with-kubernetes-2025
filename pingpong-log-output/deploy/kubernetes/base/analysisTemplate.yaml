@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: pingpong-cpu-usage-rate
+spec:
+  metrics:
+    - name: cpu-usage-rate
+      initialDelay: 4m
+      # The analysis succeeds if the CPU usage rate is less than 2%.
+      # If it's 2% or higher, the analysis fails, leading to a revert.
+      successCondition: result < 2
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-1752-prometheus.prometheus:9090
+          query: |
+            scalar(sum(rate(container_cpu_usage_seconds_total{namespace="exercises"}[5m])) / sum(machine_cpu_cores) * 100)

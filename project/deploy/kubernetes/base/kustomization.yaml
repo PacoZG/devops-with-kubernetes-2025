@@ -12,6 +12,6 @@ resources:
   - todo-db-backup-cronjob.yaml
 images:
   - name: CLIENT/IMAGE
-    newName: sirpacoder/client:v4.2
+    newName: sirpacoder/client:v4.5
   - name: SERVER/IMAGE
-    newName: sirpacoder/server:v4.2
+    newName: sirpacoder/server:v4.5

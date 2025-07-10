@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { useCreateTodo, useTodos } from '../hooks/useTodos'
+import { useCreateTodo, useTodos, useUpdateTodo } from '../hooks/useTodos'
 import { capitalize } from 'lodash'
 import { REACT_APP_SERVER_URL } from '../utils/config.js'
 
 const TodoList = () => {
   const { data: todos = [], isLoading, isError } = useTodos()
   const createTodoMutation = useCreateTodo()
+  const updateTodoMutation = useUpdateTodo()
   const [text, setText] = useState('')
 
   if (isLoading) {
@@ -25,8 +26,11 @@ const TodoList = () => {
     }
     void createTodoMutation.mutate(newTodo)
 
-    console.log('[CLIENT]: Todo to create:', newTodo)
     setText('')
+  }
+
+  const handleChangeStatus = id => {
+    void updateTodoMutation.mutate(id)
   }
 
   return (
@@ -78,29 +82,110 @@ const TodoList = () => {
         </button>
       </div>
 
-      {todos.map(todo => (
-        <div className={`todo ${todo.status === 'done' ? 'done' : 'not-done'}`} key={todo.id}>
-          <div className="text">
-            {todo.text.includes('<a') ? (
-              <>
-                <div>{'Task: Read'}</div>
-                <div dangerouslySetInnerHTML={{ __html: todo.text }} />
-              </>
-            ) : (
-              <>
-                <div>{'Task:'}</div>
-                <div className="span">{todo.text}</div>
-              </>
-            )}
-          </div>
+      <h2>Todo</h2>
 
-          <div className="status">
-            <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
-          </div>
-        </div>
-      ))}
+      {todos.filter(todo => todo.status === 'not-done').length === 0 ? (
+        <>
+          <h2 className="empty-list">Nothing to do</h2>
+        </>
+      ) : (
+        todos
+          .filter(todo => todo.status === 'not-done')
+          .map(todo => (
+            <div className={`todo not-done`} key={todo.id}>
+              <div>
+                <div className="text">
+                  {todo.text.includes('<a') ? (
+                    <>
+                      <div>{'Task: Read'}</div>
+                      <div dangerouslySetInnerHTML={{ __html: todo.text }} />
+                    </>
+                  ) : (
+                    <>
+                      <div>{'Task:'}</div>
+                      <div className="span">{todo.text}</div>
+                    </>
+                  )}
+                </div>
 
-      <footer className="TodoList__footer">DevOps With Kubernetes 2025</footer>
+                <div className="status">
+                  <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
+                </div>
+              </div>
+
+              <button className="done-button" onClick={() => handleChangeStatus(todo.id)}>
+                Mark as done
+              </button>
+            </div>
+          ))
+      )}
+
+      <h2>Done</h2>
+
+      {todos.filter(todo => todo.status === 'done').length === 0 ? (
+        <>
+          <h2 className="empty-list">You haven't done anything</h2>
+        </>
+      ) : (
+        <>
+          {todos
+            .filter(todo => todo.status === 'done')
+            .map(todo => (
+              <div className={`todo done`} key={todo.id}>
+                <div>
+                  <div className="text">
+                    {todo.text.includes('<a') ? (
+                      <>
+                        <div>{'Task: Read'}</div>
+                        <div dangerouslySetInnerHTML={{ __html: todo.text }} />
+                      </>
+                    ) : (
+                      <>
+                        <div>{'Task:'}</div>
+                        <div className="span">{todo.text}</div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="status">
+                    <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </>
+      )}
+
+      {todos
+        .filter(todo => todo.status === 'done')
+        .map(todo => (
+          <div className={`todo done`} key={todo.id}>
+            <div>
+              <div className="text">
+                {todo.text.includes('<a') ? (
+                  <>
+                    <div>{'Task: Read'}</div>
+                    <div dangerouslySetInnerHTML={{ __html: todo.text }} />
+                  </>
+                ) : (
+                  <>
+                    <div>{'Task:'}</div>
+                    <div className="span">{todo.text}</div>
+                  </>
+                )}
+              </div>
+
+              <div className="status">
+                <div>{`Status: ${capitalize(todo.status.replace('-', ' '))}`}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+      <footer className="TodoList__footer">
+        <a href="https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes">DevOps With Kubernetes 2025</a>{' '}
+        University of Helsinki
+      </footer>
     </div>
   )
 }

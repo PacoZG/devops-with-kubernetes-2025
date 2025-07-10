@@ -65,6 +65,10 @@ code {
 }
 
 .todo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     border-width: 2px;
     margin-bottom: 10px;
     padding: 20px;
@@ -96,4 +100,17 @@ code {
     font-size: 20px;
     margin: 0;
     font-weight: 700;
+}
+
+.done-button {
+    background-color: burlywood;
+    border-radius: 10px;
+    height: 50px;
+    width: 100px;
+    cursor: pointer;
+}
+
+.empty-list {
+    color: firebrick;
+    margin-left: 30px;
 }

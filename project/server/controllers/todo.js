@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import getAllTodos from '../db/getAllTodos.js'
 import storeTodo from '../db/storeTodo.js'
 import getTodo from '../db/getTodo.js'
+import updateTodo from '../db/updateTodo.js'
 
 const todoappRouter = Router()
 
@@ -44,6 +45,18 @@ todoappRouter.post('/', async (req, res) => {
   } catch (error) {
     console.error('[ERROR] Creating new todo:', error.message)
     res.status(500).json({ error: 'Failed to create todo' })
+  }
+})
+
+todoappRouter.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    console.log(`[PATCH] /api/todos/${id} - Updating todo`)
+    const updatedTodo = await updateTodo(id)
+    res.status(200).json(updatedTodo)
+  } catch (error) {
+    console.error(`[ERROR] Updating todo with ID ${req.params.id}:`, error.message)
+    res.status(404).json({ error: 'Todo not found' })
   }
 })
 

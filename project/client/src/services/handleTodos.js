@@ -21,4 +21,11 @@ const createTodo = async todo => {
   return response.data
 }
 
-export { getAllTodos, createTodo }
+const updateTodo = async id => {
+  console.log(`Updating ToDo to ${baseUrl}/api/todos/${id}`)
+  const response = await axios.patch(`${baseUrl}/api/todos/${id}`)
+
+  return response.data
+}
+
+export { getAllTodos, createTodo, updateTodo }

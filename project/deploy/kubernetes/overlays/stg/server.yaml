@@ -10,6 +10,9 @@ spec:
     spec:
       containers:
         - name: server
+          env:
+            - name: POSTGRES_HOST
+              value: stg-postgres-svc
       volumes:
         - name: shared-files
           persistentVolumeClaim:

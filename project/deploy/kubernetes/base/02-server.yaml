@@ -29,11 +29,6 @@ spec:
               value: "files/image.jpg"
             - name: TIMESTAMP_FILE_PATH
               value: "files/timestamp.txt"
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: config-map-variables
-                  key: postgres-host
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

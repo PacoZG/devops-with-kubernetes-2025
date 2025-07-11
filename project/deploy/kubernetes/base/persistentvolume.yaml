@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: manual
+  name: project-manual
 provisioner: kubernetes.io/no-provisioner # Indicates static provisioning
 volumeBindingMode: WaitForFirstConsumer # Recommended for local volumes to ensure node affinity is respected
 reclaimPolicy: Retain # Or Delete, depending on your data retention policy
@@ -13,7 +13,7 @@ kind: PersistentVolume
 metadata:
   name: project-pv
 spec:
-  storageClassName: manual
+  storageClassName: project-manual
   capacity:
     storage: 1Gi # Could be e.q. 500Gi. Small amount is to preserve space when testing locally
   volumeMode: Filesystem # This declares that it will be mounted into pods as a directory

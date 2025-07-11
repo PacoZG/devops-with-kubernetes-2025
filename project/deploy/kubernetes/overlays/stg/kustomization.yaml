@@ -6,6 +6,8 @@ resources:
 namePrefix: stg-
 patches:
   - path: broadcaster.yaml
+  - path: server.yaml
+  - path: persistentvolume.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

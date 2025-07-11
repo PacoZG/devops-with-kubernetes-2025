@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-dep
+spec:
+  selector:
+    matchLabels:
+      app: server
+  template:
+    spec:
+      containers:
+        - name: server
+      volumes:
+        - name: shared-files
+          persistentVolumeClaim:
+            claimName: stg-project-files-claim

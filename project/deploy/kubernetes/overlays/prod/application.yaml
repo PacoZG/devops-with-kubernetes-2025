@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/PacoZG/devops-with-kubernetes-2025
-    targetRevision: main
+    targetRevision: HEAD
     path: project/deploy/kubernetes/overlays/prod
   destination:
     server: https://kubernetes.default.svc

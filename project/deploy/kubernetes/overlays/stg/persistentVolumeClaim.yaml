@@ -11,7 +11,7 @@ reclaimPolicy: Retain
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: stg-project-pv
+  name: project-pv
 spec:
   storageClassName: stg-project-manual
   capacity:

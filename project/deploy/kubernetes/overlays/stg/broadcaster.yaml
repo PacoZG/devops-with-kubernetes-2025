@@ -18,4 +18,4 @@ spec:
             - name: NATS_URL
               value: nats://my-nats:4222
             - name: DISCORD_URL
-              value: ""
+              value: 'null'

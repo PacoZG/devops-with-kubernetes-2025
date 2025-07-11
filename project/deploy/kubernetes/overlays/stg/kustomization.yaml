@@ -5,4 +5,4 @@ resources:
   - ../../base
 namePrefix: stg-
 patches:
-  - path: 00-broadcaster.yaml
+  - path: broadcaster.yaml

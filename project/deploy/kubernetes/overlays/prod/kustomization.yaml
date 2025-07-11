@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: production
 resources:
   - ../../base
-  - 05-todo-db-backup-cronjob.yaml
+  - todo-db-backup-cronjob.yaml
 namePrefix: prod-
 patches:
-  - path: 00-broadcaster.yaml
+  - path: broadcaster.yaml

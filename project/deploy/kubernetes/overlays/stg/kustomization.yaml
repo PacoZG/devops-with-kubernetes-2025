@@ -7,6 +7,7 @@ namePrefix: stg-
 patches:
   - path: server.yaml
   - path: client.yaml
+  - path: configMap.yaml
   - path: ingress.yaml
 images:
   - name: CLIENT/IMAGE

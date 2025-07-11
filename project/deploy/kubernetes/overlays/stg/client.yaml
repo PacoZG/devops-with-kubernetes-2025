@@ -15,4 +15,7 @@ spec:
         - name: client
           env:
             - name: REACT_APP_SERVER_URL
-              value: http://stg.localhost:8081
+              valueFrom:
+                configMapKeyRef:
+                  name: stg-config-map-variables
+                  key: server-url

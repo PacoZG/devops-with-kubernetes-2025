@@ -11,7 +11,6 @@ resources:
   - 04-cronJob.yaml
   - 06-configMap.yaml
   - 07-ingress.yaml
-namespace: project
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

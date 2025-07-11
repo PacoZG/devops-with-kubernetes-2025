@@ -17,7 +17,10 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              value: http://localhost:8081 # For local deployment
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map-variables
+                  key: server-url
           resources:
             requests:
               memory: '64Mi'

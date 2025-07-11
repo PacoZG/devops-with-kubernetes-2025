@@ -1,12 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: exercises
 resources:
+  - namespace.yaml
+  - persistentvolume.yaml
+  - persistentvolumeclaim.yaml
   - 00-pingpong.yaml
   - 01-log_output.yaml
   - 02-configMap.yaml
   - 03-postgres.yaml
   - 04-ingress.yaml
-  - analysisTemplate.yaml
-  #  - 05-gateway.yaml
-  #  - 06-backendconfig.yaml
   - secret.yaml
+#  - analysisTemplate.yaml

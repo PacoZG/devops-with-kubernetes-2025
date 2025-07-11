@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prod-broadcaster-dep
+  name: broadcaster-dep
 spec:
   replicas: 4
   selector:

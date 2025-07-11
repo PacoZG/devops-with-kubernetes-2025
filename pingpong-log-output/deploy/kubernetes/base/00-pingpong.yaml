@@ -20,7 +20,7 @@ spec:
             claimName: pingpong-files-claim
       containers:
         - name: pingpong
-          image: sirpacoder/pingpong:v4.1
+          image: PINGPONG/IMAGE
           imagePullPolicy: Always
           volumeMounts:
             - name: shared-files

@@ -12,3 +12,13 @@ resources:
   - 04-ingress.yaml
   - secret.yaml
 #  - analysisTemplate.yaml
+images:
+  - name: GENERATOR/IMAGE
+    newName: sirpacoder/hash-generator
+    newTag: v4.1
+  - name: READER/IMAGE
+    newName: sirpacoder/hash-reader
+    newTag: v4.1
+  - name: PINGPONG/IMAGE
+    newName: sirpacoder/pingpong
+    newTag: v4.1

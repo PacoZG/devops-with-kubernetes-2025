@@ -26,7 +26,7 @@ spec:
                 path: information.txt
       containers:
         - name: hash-generator
-          image: sirpacoder/hash-generator:v4.1
+          image: GENERATOR/IMAGE
           imagePullPolicy: Always
           env:
             - name: GENERATOR_PORT
@@ -45,7 +45,7 @@ spec:
               cpu: "500m"
 
         - name: hash-reader
-          image: sirpacoder/hash-reader:v4.1
+          image: READER/IMAGE
           imagePullPolicy: Always
           env:
             - name: READER_PORT

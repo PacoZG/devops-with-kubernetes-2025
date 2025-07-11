@@ -4,13 +4,11 @@ resources:
   - namespace.yaml
   - persistentvolume.yaml
   - persistentvolumeclaim.yaml
-  - secrets.yaml
   - 00-broadcaster.yaml
   - 01-postgres.yaml
   - 02-server.yaml
   - 03-client.yaml
   - 04-cronJob.yaml
-  - 05-todo-db-backup-cronjob.yaml
   - 06-configMap.yaml
   - 07-ingress.yaml
 namespace: project

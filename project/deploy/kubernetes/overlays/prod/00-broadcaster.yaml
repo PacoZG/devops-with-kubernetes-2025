@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broadcaster-dep
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: broadcaster
+  template:
+    metadata:
+      labels:
+        app: broadcaster
+    spec:
+      containers:
+        - name: broadcaster
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+            - name: DISCORD_URL
+              valueFrom:
+                secretKeyRef:
+                  name: project-secrets
+                  key: discord-url

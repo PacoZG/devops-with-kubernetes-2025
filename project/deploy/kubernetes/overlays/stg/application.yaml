@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: todo-staging
+  namespace: argocd # This is where your Argo CD instance runs
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/PacoZG/devops-with-kubernetes-2025
+    targetRevision: main
+    path: project/deploy/kubernetes/overlays/stg
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

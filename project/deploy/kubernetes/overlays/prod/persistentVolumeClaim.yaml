@@ -37,7 +37,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: project-files-claim
 spec:
-  storageClassName: manual
+  storageClassName: prod-project-manual
   accessModes:
     - ReadWriteOnce
   resources:

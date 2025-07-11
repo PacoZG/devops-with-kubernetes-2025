@@ -14,10 +14,13 @@ if (NATS_URL) {
     const sub = conn.subscribe('todo_created', { queue: 'broadcaster.workers' })
     // console.log('Sending message: 2', sub)
     for await (const message of sub) {
-      console.log(`Sending message: ${natsSC.decode(message.data)}`)
-      console.log(natsSC.decode(message.data))
+      console.log(`[BROADCASTER]: Sending message: ${natsSC.decode(message.data)}`)
       const m_json = { 'content': natsSC.decode(message.data) }
-      await axios.post(DISCORD_URL, m_json)
+
+      if (DISCORD_URL) {
+        console.log('[BROADCASTER]: Sending message to Discord disabled:', DISCORD_URL)
+        await axios.post(DISCORD_URL, m_json)
+      }
     }
   })
 } else {

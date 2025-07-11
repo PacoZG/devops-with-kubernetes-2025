@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: staging
 resources:
   - ../../base
-  - persistentVolumeClaim.yaml
 namePrefix: stg-
 patches:
   - path: server.yaml

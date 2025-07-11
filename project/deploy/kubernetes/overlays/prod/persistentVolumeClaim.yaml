@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: project-manual
+  name: prod-project-manual
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer # Recommended for local volumes to ensure node affinity is respected
 reclaimPolicy: Retain
@@ -11,7 +11,7 @@ reclaimPolicy: Retain
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: project-pv
+  name: prod-project-pv
 spec:
   storageClassName: prod-project-manual
   capacity:
@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: project-files-claim
+  name: prod-project-files-claim
 spec:
   storageClassName: prod-project-manual
   accessModes:

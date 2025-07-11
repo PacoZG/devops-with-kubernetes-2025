@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: project-manual
+  name: stg-project-manual
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 reclaimPolicy: Retain
@@ -11,7 +11,7 @@ reclaimPolicy: Retain
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: project-pv
+  name: stg-project-pv
 spec:
   storageClassName: stg-project-manual
   capacity:
@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: project-files-claim
+  name: stg-project-files-claim
 spec:
   storageClassName: stg-project-manual
   accessModes:

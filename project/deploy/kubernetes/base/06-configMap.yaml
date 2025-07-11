@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: config-map-variables
 data:
+  nats-url: "nats://my-nats:4222"
   create-daily-todo.sh: |-
     #!/usr/bin/env sh
 

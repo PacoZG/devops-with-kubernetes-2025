@@ -8,8 +8,7 @@ metadata:
     kubernetes.io/ingress.class: traefik # Explicitly specify Traefik as the ingress controller
 spec:
   rules:
-    - host: prod.localhost #
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix

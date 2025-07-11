@@ -6,8 +6,8 @@ resources:
 namePrefix: stg-
 patches:
   - path: server.yaml
-  - path: ingress.yaml
   - path: client.yaml
+  - path: ingress.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

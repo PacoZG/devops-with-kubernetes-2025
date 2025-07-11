@@ -8,6 +8,8 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color (reset)
 
+cd ../kubernetes/overlays/prod
+
 # Get the current working directory where the script is executed
 CURRENT_EXEC_PATH=$(pwd)
 echo "Script executed from: $CURRENT_EXEC_PATH"
@@ -58,7 +60,7 @@ cd "$PROJECT_ROOT" || { printf "${RED}Error: Could not change to project root.\n
 
 echo "Now operating from project root: $(pwd)"
 
-printf "${YELLOW}Checking if tag %s already exists...${NC}\n" "$NEW_TAG"
+printf "${GREEN}Checking if tag %s already exists...${NC}\n" "$NEW_TAG"
 
 # Check if the tag exists locally
 if git tag -l "$NEW_TAG" | grep -q "$NEW_TAG"; then

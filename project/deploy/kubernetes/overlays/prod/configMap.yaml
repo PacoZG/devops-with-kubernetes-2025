@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: config-map-variables
 data:
-  server-url: http://prod.localhost:8081
+  server-url: "http://prod.localhost:8081"

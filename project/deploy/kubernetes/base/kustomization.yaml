@@ -8,3 +8,4 @@ resources:
   - 03-client.yaml
   - 04-cronJob.yaml
   - 06-configMap.yaml
+  - 07-ingress.yaml

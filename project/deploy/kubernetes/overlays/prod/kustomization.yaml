@@ -9,6 +9,7 @@ resources:
 namePrefix: prod-
 patches:
   - path: broadcaster.yaml
+  - path: configMap.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

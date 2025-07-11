@@ -35,10 +35,7 @@ spec:
                   name: project-secrets
                   key: postgres-password
             - name: NATS_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: config-map-variables
-                  key: nats-url
+              value: nats://my-nats:4222
           volumeMounts:
             - name: shared-files
               mountPath: /usr/src/app/files

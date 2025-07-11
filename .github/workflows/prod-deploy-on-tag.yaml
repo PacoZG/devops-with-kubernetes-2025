@@ -15,7 +15,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for git operations
+          ref: main
+          fetch-depth: 0 # Still good to have for full history if needed, but not strictly for this push
           token: ${{ secrets.GITHUB_TOKEN }} # Use default token for pushing to same repo
 
       - name: Extract Tag Name
@@ -57,7 +58,8 @@ jobs:
             echo "No changes detected in $APP_MANIFEST_PATH. Skipping commit."
           else
             git add "$APP_MANIFEST_PATH"
-            git commit -m "chore(argocd): Update production to tag $NEW_TAG"
-            git push
+            git commit -m "chore(argocd): Update production application to tag $NEW_TAG"
+            # No need for 'git push origin HEAD:main' because we are already on 'main'
+            git push 
             echo "Committed and pushed update to $APP_MANIFEST_PATH for tag $NEW_TAG."
           fi

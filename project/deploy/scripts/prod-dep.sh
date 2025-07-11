@@ -38,7 +38,7 @@ fi
 printf "${BLUE}Running push script deployments script${NC}\n"
 
 printf "${GREEN}Update production application.yaml with new tag${NC}\n"
-APP_MANIFEST_PATH="application.yaml" # Updated path relative to project root
+APP_MANIFEST_PATH="application.yaml"
 
 if [ ! -f "$APP_MANIFEST_PATH" ]; then
   echo "::error::ArgoCD Application manifest '$APP_MANIFEST_PATH' not found."

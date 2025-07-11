@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: todo-staging
+  name: staging
   namespace: argocd # This is where your Argo CD instance runs
 spec:
   project: default

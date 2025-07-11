@@ -4,8 +4,6 @@ metadata:
   name: project
   labels:
     name: project
-  annotations:
-    kubernetes.io/ingress.class: traefik # Explicitly specify Traefik as the ingress controller
 spec:
   rules:
     - host: prod.localhost

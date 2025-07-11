@@ -1,8 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: production
 resources:
   - ../../base
   - 05-todo-db-backup-cronjob.yaml
-namespace: prod-
+namePrefix: prod-
 patches:
   - path: 00-broadcaster.yaml

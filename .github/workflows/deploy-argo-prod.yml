@@ -52,6 +52,7 @@ jobs:
           cat "$APP_MANIFEST"
 
           # Configure Git for the commit
+          git checkout main
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 

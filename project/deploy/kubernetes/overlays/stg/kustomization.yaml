@@ -4,7 +4,6 @@ namespace: staging
 resources:
   - ../../base
   - persistentVolumeClaim.yaml
-  - server.yaml
 namePrefix: stg-
 patches:
   - path: server.yaml

@@ -16,7 +16,7 @@ automatically for any changes.
 ## ✅ Deployment Summary
 
 Same as with the Pingpong application, to achieve this, I avoided using
-the [deployment script](deploy/scripts/deploy-dev.sh) because Argo CD relies on
+the [deployment script](deploy/scripts/local-dep.sh) because Argo CD relies on
 `kustomization.yaml` for application deployment. Running scripts through Argo CD
 would require additional configurations and steps, which go against the
 declarative GitOps workflow.

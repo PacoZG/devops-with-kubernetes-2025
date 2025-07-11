@@ -3,7 +3,6 @@ kind: ConfigMap
 metadata:
   name: config-map-variables
 data:
-  postgres-host: postgres-svc
   create-daily-todo.sh: |-
     #!/usr/bin/env sh
 

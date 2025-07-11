@@ -7,7 +7,6 @@ resources:
 namePrefix: stg-
 patches:
   - path: server.yaml
-  - path: configMap.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

@@ -10,7 +10,6 @@ resources:
   - 02-configMap.yaml
   - 03-postgres.yaml
   - 04-ingress.yaml
-  - secret.yaml
 #  - analysisTemplate.yaml
 images:
   - name: GENERATOR/IMAGE

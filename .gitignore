@@ -6,4 +6,6 @@
 /**/**/.terraform/
 /**/**/.terraform*
 /**/**/terraform.tfstate*
+/**/*secret.yaml
+/**/*secrets.yaml
 /**/**/*key.json

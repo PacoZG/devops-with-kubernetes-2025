@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: staging
 resources:
   - ../../base
+  - ingress.yaml
 namePrefix: stg-
 patches:
   - path: server.yaml

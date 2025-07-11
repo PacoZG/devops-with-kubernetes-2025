@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-dep
+spec:
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          env:
+            - name: REACT_APP_SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: stg-config-map-variables
+                  key: server-url

@@ -7,6 +7,7 @@ namePrefix: stg-
 patches:
   - path: server.yaml
   - path: ingress.yaml
+  - path: client.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

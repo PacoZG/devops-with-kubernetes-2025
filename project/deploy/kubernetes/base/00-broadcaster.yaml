@@ -18,7 +18,10 @@ spec:
           imagePullPolicy: Always
           env:
             - name: NATS_URL
-              value: nats://my-nats:4222
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map-variables
+                  key: nats-url
           resources:
             requests:
               memory: '64Mi'

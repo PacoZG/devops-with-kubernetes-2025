@@ -62,7 +62,6 @@ echo "Now operating from project root: $(pwd)"
 
 printf "${GREEN}Checking if tag %s already exists...${NC}\n" "$NEW_TAG"
 
-# Check if the tag exists locally
 if git tag -l "$NEW_TAG" | grep -q "$NEW_TAG"; then
   printf "${YELLOW}Local tag '%s' already exists. Forcing update.${NC}\n" "$NEW_TAG"
   git tag -f "$NEW_TAG" # Force update local tag
@@ -71,7 +70,6 @@ else
   git tag "$NEW_TAG" # Create new local tag
 fi
 
-# Check if the tag exists on the remote (origin)
 if git ls-remote --tags origin "$NEW_TAG" | grep -q "$NEW_TAG"; then
   printf "${YELLOW}Remote tag '%s' already exists. Forcing push.${NC}\n" "$NEW_TAG"
   git push origin "$NEW_TAG" -f # Force push to remote

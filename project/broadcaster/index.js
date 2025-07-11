@@ -4,8 +4,8 @@ import { connect, StringCodec } from 'nats'
 
 const natsSC = StringCodec()
 const NATS_URL = process.env.NATS_URL
-const DISCORD_URL = process.env.DISCORD_URL
-
+const DISCORD_URL = process.env.DISCORD_URL || null
+console.log({ DISCORD_URL })
 if (NATS_URL) {
   console.log({ NATS_URL })
   console.log('Broadcaster started')

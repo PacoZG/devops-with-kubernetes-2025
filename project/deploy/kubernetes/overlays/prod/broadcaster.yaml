@@ -15,8 +15,6 @@ spec:
       containers:
         - name: broadcaster
           env:
-            - name: NATS_URL
-              value: nats://my-nats:4222
             - name: DISCORD_URL
               valueFrom:
                 secretKeyRef:

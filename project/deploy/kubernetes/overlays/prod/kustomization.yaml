@@ -4,6 +4,8 @@ namespace: production
 resources:
   - ../../base
   - todo-db-backup-cronjob.yaml
+  - persistentVolumeClaim.yaml
+  - server.yaml
 namePrefix: prod-
 patches:
   - path: broadcaster.yaml

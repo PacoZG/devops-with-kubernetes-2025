@@ -19,11 +19,6 @@ spec:
           env:
             - name: NATS_URL
               value: nats://my-nats:4222
-            - name: DISCORD_URL
-              valueFrom:
-                secretKeyRef:
-                  name: project-secrets
-                  key: discord-url
           resources:
             requests:
               memory: '64Mi'

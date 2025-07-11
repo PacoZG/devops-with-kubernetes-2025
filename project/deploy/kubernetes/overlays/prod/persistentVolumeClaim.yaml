@@ -2,9 +2,9 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: project-manual
-provisioner: kubernetes.io/no-provisioner # Indicates static provisioning
+provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer # Recommended for local volumes to ensure node affinity is respected
-reclaimPolicy: Retain # Or Delete, depending on your data retention policy
+reclaimPolicy: Retain
 
 ---
 
@@ -13,15 +13,15 @@ kind: PersistentVolume
 metadata:
   name: project-pv
 spec:
-  storageClassName: project-manual
+  storageClassName: prod-project-manual
   capacity:
-    storage: 1Gi # Could be e.q. 500Gi. Small amount is to preserve space when testing locally
-  volumeMode: Filesystem # This declares that it will be mounted into pods as a directory
+    storage: 1Gi
+  volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
   local:
     path: /tmp/kube/project
-  nodeAffinity: ## This is only required for local, it defines which nodes can access it
+  nodeAffinity:
     required:
       nodeSelectorTerms:
         - matchExpressions:
@@ -29,3 +29,17 @@ spec:
               operator: In
               values:
                 - k3d-k3s-default-agent-0
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: project-files-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

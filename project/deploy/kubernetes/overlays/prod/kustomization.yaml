@@ -7,3 +7,13 @@ resources:
 namePrefix: prod-
 patches:
   - path: broadcaster.yaml
+images:
+  - name: CLIENT/IMAGE
+    newName: sirpacoder/client
+    newTag: v4.7
+  - name: SERVER/IMAGE
+    newName: sirpacoder/server
+    newTag: v4.7
+  - name: BROADCASTER/IMAGE
+    newName: sirpacoder/broadcaster
+    newTag: v4.7

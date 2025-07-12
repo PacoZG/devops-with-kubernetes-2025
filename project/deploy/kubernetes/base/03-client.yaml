@@ -15,6 +15,8 @@ spec:
         - name: client
           image: CLIENT/IMAGE
           imagePullPolicy: Always
+          ports:
+            - containerPort: 80
           env:
             - name: REACT_APP_SERVER_URL
               valueFrom:
@@ -39,6 +41,6 @@ spec:
   selector:
     app: client
   ports:
-    - port: 30081
+    - port: 80
       protocol: TCP
       targetPort: 3000

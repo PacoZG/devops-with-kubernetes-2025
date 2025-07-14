@@ -70,10 +70,10 @@ kind: Service
 metadata:
   name: server-svc
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: server
   ports:
-    - port: 30081
+    - port: 80
       protocol: TCP
       targetPort: 3001

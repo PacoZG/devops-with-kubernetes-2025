@@ -36,6 +36,6 @@ spec:
   selector:
     app: client
   ports:
-    - port: 30081
+    - port: 80
       protocol: TCP
       targetPort: 3000

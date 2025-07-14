@@ -17,10 +17,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: config-map-variables
-                  key: server-url
+              value: http://localhost:8081
           resources:
             requests:
               memory: '64Mi'

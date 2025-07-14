@@ -17,7 +17,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: REACT_APP_SERVER_URL
-              value: http://localhost:8081
+              value: ""
           resources:
             requests:
               memory: '64Mi'

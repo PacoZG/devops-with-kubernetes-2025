@@ -8,8 +8,6 @@ namePrefix: prod-
 patches:
   - path: broadcaster.yaml
   - path: server.yaml
-  - path: configMap.yaml
-  - path: ingress.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

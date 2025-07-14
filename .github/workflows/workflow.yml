@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Trigger Argo CD webhook
         run: |
-          curl -X POST https://suggesting-staff-dealing-layout.trycloudflare.com/api/webhook
+          curl -X POST https://35.228.167.226/api/webhook

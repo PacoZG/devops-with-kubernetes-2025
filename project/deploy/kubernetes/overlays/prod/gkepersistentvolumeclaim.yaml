@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: project-files-claim
+  name: prod-project-files-claim
 spec:
   accessModes:
     - ReadWriteOnce

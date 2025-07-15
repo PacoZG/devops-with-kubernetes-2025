@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: create-daily-todo-cron-job
+spec:
+  schedule: "* 8 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: todo-generator-script
+              env:
+                - name: SERVER_URL
+                  value: http://prod-server-svc:80

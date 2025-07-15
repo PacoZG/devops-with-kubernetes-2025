@@ -8,6 +8,7 @@ namePrefix: prod-
 patches:
   - path: broadcaster.yaml
   - path: server.yaml
+  - path: 04-cronJob.yaml
 images:
   - name: CLIENT/IMAGE
     newName: sirpacoder/client

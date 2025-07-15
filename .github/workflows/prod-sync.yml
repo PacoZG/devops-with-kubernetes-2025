@@ -3,12 +3,56 @@ name: Trigger Argo CD Sync on Release Tag
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+' # e.g., 1.0, 2.5
 
 jobs:
   notify-argocd:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # This token is crucial for the workflow to be able to push changes back to the repository.
+          # It grants write permissions.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get tag name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      - name: Update Argo CD Production Target Revision in Git
+        run: |
+          TAG="${{ steps.get_tag.outputs.TAG_NAME }}"
+          APP_FILE="project/deploy/kubernetes/overlays/prod/application.yaml" # Corrected path
+
+          if [ ! -f "$APP_FILE" ]; then
+            echo "::error::ArgoCD Application manifest '$APP_FILE' not found."
+            exit 1
+          fi
+
+          echo "Updating $APP_FILE targetRevision to $TAG"
+
+          # Use sed to update the targetRevision field
+          # Assumes the targetRevision line starts with 'targetRevision:'
+          sed -i "s|^[[:space:]]*targetRevision:.*|targetRevision: \"$TAG\"|" "$APP_FILE"
+
+          echo "--- Updated Manifest Content ---"
+          cat "$APP_FILE"
+          echo "------------------------------"
+
+          # Configure Git user for the commit
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Commit and push the changes back to the repository
+          # '|| true' allows the workflow to continue if no changes are made (e.g., same tag pushed twice)
+          # '[skip ci]' in the commit message is CRITICAL to prevent an infinite loop
+          git add "$APP_FILE"
+          git commit -m "chore(release): Update prod targetRevision to $TAG [skip ci]" || echo "No changes to commit"
+          git push
+
       - name: Trigger Argo CD webhook
+        # This curl command sends the notification to Argo CD AFTER the application.yaml
+        # has been updated and pushed to Git. Argo CD will then pick up the new targetRevision.
         run: |
           curl -X POST http://35.228.167.226/api/webhook

@@ -1,58 +1,97 @@
-name: Trigger Argo CD Sync on Release Tag
+name: Deploy Tagged Release to Production via ArgoCD
 
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+' # e.g., 1.0, 2.5
+      # Trigger on semantic versioning tags like v1.0.0, v2.1.5
+      # This pattern aligns with the validation step below.
+      - '[0-9]+.[0-9]+'
 
 jobs:
-  notify-argocd:
+  update-argocd-target:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grant write permission to push changes back to the repository
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # This token is crucial for the workflow to be able to push changes back to the repository.
-          # It grants write permissions.
+          # Fetch full history to allow pushing to a branch after a tag trigger
+          fetch-depth: 0
+          # Use the default GITHUB_TOKEN which has 'contents: write' permission
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get tag name
+      - name: Extract Tag Name
         id: get_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-
-      - name: Update Argo CD Production Target Revision in Git
         run: |
-          TAG="${{ steps.get_tag.outputs.TAG_NAME }}"
-          APP_FILE="project/deploy/kubernetes/overlays/prod/application.yaml" # Corrected path
+          # Extract the tag name (e.g., 'v1.0.0' from 'refs/tags/v1.0.0')
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Detected tag: $TAG_NAME"
+          echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT" # Set as output for subsequent steps
 
-          if [ ! -f "$APP_FILE" ]; then
-            echo "::error::ArgoCD Application manifest '$APP_FILE' not found."
+      - name: Validate Tag Format
+        run: |
+          # Ensure the tag matches the expected semantic versioning format (vX.Y.Z)
+          if ! [[ "${{ steps.get_tag.outputs.TAG_NAME }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag name '${{ steps.get_tag.outputs.TAG_NAME }}' does not match required format 'vX.Y.Z'."
             exit 1
           fi
 
-          echo "Updating $APP_FILE targetRevision to $TAG"
+      - name: Install yq (YAML Processor)
+        # yq is not pre-installed on GitHub Actions runners, so we install it
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          echo "yq installed successfully."
+          yq --version
 
-          # Use sed to update the targetRevision field
-          # Assumes the targetRevision line starts with 'targetRevision:'
-          sed -i "s|^[[:space:]]*targetRevision:.*|targetRevision: \"$TAG\"|" "$APP_FILE"
+      - name: Update targetRevision in ArgoCD Application manifest
+        run: |
+          APP_MANIFEST="project/deploy/kubernetes/overlays/prod/application.yaml"
+          TAG="${{ steps.get_tag.outputs.TAG_NAME }}"
+          MAIN_BRANCH="main" # Or 'master', depending on your default branch name
+
+          # Ensure the application manifest file exists
+          if [ ! -f "$APP_MANIFEST" ]; then
+            echo "::error::ArgoCD Application manifest '$APP_MANIFEST' not found in '$PWD'."
+            exit 1
+          fi
+
+          # Switch to the main branch before making changes and pushing
+          # This avoids the "detached HEAD" issue and ensures the push is to a branch
+          echo "Switching to branch: $MAIN_BRANCH"
+          git checkout "$MAIN_BRANCH" || git checkout -b "$MAIN_BRANCH" # Checkout or create if it doesn't exist locally
+
+          # Update the targetRevision field using yq
+          echo "Updating '$APP_MANIFEST' targetRevision to '$TAG'"
+          yq e ".spec.source.targetRevision = \"$TAG\"" -i "$APP_MANIFEST"
 
           echo "--- Updated Manifest Content ---"
-          cat "$APP_FILE"
+          cat "$APP_MANIFEST"
           echo "------------------------------"
 
-          # Configure Git user for the commit
+          # Configure Git for the commit
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          # Commit and push the changes back to the repository
-          # '|| true' allows the workflow to continue if no changes are made (e.g., same tag pushed twice)
-          # '[skip ci]' in the commit message is CRITICAL to prevent an infinite loop
-          git add "$APP_FILE"
-          git commit -m "chore(release): Update prod targetRevision to $TAG [skip ci]" || echo "No changes to commit"
-          git push
+          # Check if there are changes before committing to avoid empty commits
+          if git diff --exit-code --quiet; then
+            echo "No changes detected in $APP_MANIFEST. Skipping commit."
+          else
+            # Add the modified file, commit, and push
+            git add "$APP_MANIFEST"
+            # Add '[skip ci]' to the commit message to prevent this workflow from triggering itself
+            git commit -m "chore(argocd): Update production application to tag $TAG [skip ci]"
+            echo "Committed changes. Pushing to $MAIN_BRANCH..."
+            git push origin "$MAIN_BRANCH" # Explicitly push to the main branch
+            echo "Successfully pushed update to $APP_MANIFEST for tag $TAG."
+          fi
 
       - name: Trigger Argo CD webhook
-        # This curl command sends the notification to Argo CD AFTER the application.yaml
-        # has been updated and pushed to Git. Argo CD will then pick up the new targetRevision.
+        # This curl command notifies Argo CD to immediately check for changes.
+        # It's crucial for rapid deployment after the manifest is updated in Git.
         run: |
+          echo "Triggering Argo CD webhook at http://35.228.167.226/api/webhook"
           curl -X POST http://35.228.167.226/api/webhook
+          echo "Argo CD webhook triggered."

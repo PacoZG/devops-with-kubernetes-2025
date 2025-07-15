@@ -3,7 +3,7 @@ name: Deploy Tagged Release to Production via ArgoCD
 on:
   push:
     tags:
-      # Trigger on semantic versioning tags like v1.0.0, v2.1.5
+      # Trigger on semantic versioning tags like 1.0, 2.1
       # This pattern aligns with the validation step below.
       - '[0-9]+.[0-9]+'
 
@@ -25,21 +25,20 @@ jobs:
       - name: Extract Tag Name
         id: get_tag
         run: |
-          # Extract the tag name (e.g., '1.0' from 'refs/tags/v1.0.0')
+          # Extract the tag name (e.g., '1.0' from 'refs/tags/1.0')
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           echo "Detected tag: $TAG_NAME"
           echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT" # Set as output for subsequent steps
 
       - name: Validate Tag Format
         run: |
-          # Ensure the tag matches the expected semantic versioning format (vX.Y.Z)
+          # Ensure the tag matches the expected semantic versioning format (X.Y.)
           if ! [[ "${{ steps.get_tag.outputs.TAG_NAME }}" =~ ^[0-9]+\.[0-9]+$ ]]; then
             echo "::error::Tag name '${{ steps.get_tag.outputs.TAG_NAME }}' does not match required format 'X.Y'."
             exit 1
           fi
 
       - name: Install yq (YAML Processor)
-        # yq is not pre-installed on GitHub Actions runners, so we install it
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
@@ -59,7 +58,6 @@ jobs:
           fi
 
           # Switch to the main branch before making changes and pushing
-          # This avoids the "detached HEAD" issue and ensures the push is to a branch
           echo "Switching to branch: $MAIN_BRANCH"
           git checkout "$MAIN_BRANCH" || git checkout -b "$MAIN_BRANCH" # Checkout or create if it doesn't exist locally
 
@@ -90,7 +88,6 @@ jobs:
 
       - name: Trigger Argo CD webhook
         # This curl command notifies Argo CD to immediately check for changes.
-        # It's crucial for rapid deployment after the manifest is updated in Git.
         run: |
           echo "Triggering Argo CD webhook at http://35.228.167.226/api/webhook"
           curl -X POST http://35.228.167.226/api/webhook

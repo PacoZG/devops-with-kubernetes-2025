@@ -1,10 +1,4 @@
-Here's your "super pretty" report with icons and markdown formatting:
-
------
-
 # 🚀 Exercise 4.9: ToDo Application - Project Step 25
-
------
 
 ## 🎯 Project Goal
 

@@ -1,32 +1,39 @@
-# 🚀 Exercise 4.9. The project, step 25
+Here's your "super pretty" report with icons and markdown formatting:
 
-## 🏓 1. ToDo Application
+-----
 
-## 🚀 Goal
+# 🚀 Exercise 4.9: ToDo Application - Project Step 25
 
-Enhance the Project setup as follows
+-----
 
-- Create two separate environments, production and staging that are in their own
-  namespaces
-- Each commit to the main branch should result in deployment to the staging
-  environment
-- Each tagged commit results in deployment to the production environment
-- In staging the broadcaster just logs all the messages, it does not forward
-  those to any external service
-- In staging database is not backed up
-- You may assume that secrets are readily applied outside of the ArgoCD
+## 🎯 Project Goal
 
----
+This phase of the ToDo application project focuses on enhancing our deployment
+setup to support robust and automated continuous delivery. Our key objectives
+were to:
 
-## 🛠️ Implementation
+- 🌐 **Establish Separate Environments**: Create distinct **production** and *
+  *staging** environments, each residing within its own Kubernetes namespace.
+- 🔄 **Automate Staging Deployments**: Configure our pipeline so that **every
+  commit to the `main` branch automatically triggers a deployment to the staging
+  environment**.
+- 🚀 **Automate Production Deployments**: Implement a system where **each tagged
+  commit results in a deployment to the production environment**.
+- 📝 **Staging Broadcaster Behavior**: In the staging environment, ensure the
+  broadcaster simply **logs all messages** instead of forwarding them to
+  external services.
+- 🚫 **Staging Database Policy**: Confirm that the **staging database is not
+  backed up**.
+- 🔑 **Secrets Management**: Assume that all necessary **secrets are applied
+  externally** to ArgoCD.
 
-## ✅ Deployment Summary
+-----
 
-In order to achieve making deployments to production I had to create a script
-that will push tags with the latest
-changes [deployment script](deploy/scripts/prod-dep.sh)
+## 🏗️ Implementation Structure
 
-This is how the structure of the manifests has been done
+Our approach involved a well-organized manifest structure using Kustomize
+overlays, ensuring clear separation and reusability for our different
+environments.
 
 ```
 deploy/kubernetes/
@@ -49,9 +56,48 @@ deploy/kubernetes/
         ├── ... (other stg specific manifests)
 ```
 
----
+-----
 
-### 📦 We can see how bot environments are running without any issue:
+## ✅ Deployment Insights
+
+### 🖥️ Local Deployment
+
+For local production deployments, a
+dedicated [deployment script](deploy/scripts/prod-dep.sh))
+was created to push tags with the latest changes. Accessing the ArgoCD
+application locally via an IP address proved to be more complex than
+anticipated; some crucial information might be missing for simpler local access.
+
+### ☁️ Cloud Deployment (GCP)
+
+After configuring ArgoCD on Google Cloud Platform (GCP), we successfully
+obtained an external IP address for the ArgoCD server:
+
+```
+kubectl get svc -n argocd
+NAME                                      TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)                      AGE
+argocd-applicationset-controller          ClusterIP      10.3.243.241   <none>           7000/TCP,8080/TCP            152m
+argocd-dex-server                         ClusterIP      10.3.248.126   <none>           5556/TCP,5557/TCP,5558/TCP   152m
+argocd-metrics                            ClusterIP      10.3.244.17    <none>           8082/TCP                     152m
+argocd-notifications-controller-metrics   ClusterIP      10.3.242.69    <none>           9001/TCP                     152m
+argocd-redis                              ClusterIP      10.3.241.153   <none>           6379/TCP                     152m
+argocd-repo-server                        ClusterIP      10.3.249.50    <none>           8081/TCP,8084/TCP            152m
+argocd-server                             LoadBalancer   10.3.252.3     35.228.167.226   80:30882/TCP,443:30627/TCP   152m
+argocd-server-metrics                     ClusterIP      10.3.255.240   <none>           8083/TCP                     152m
+```
+
+To manage production updates,
+a [GitHub workflow](../.github/workflows/prod-sync.yml)
+was implemented. This workflow is responsible for updating the
+`application.yaml` manifest and signaling ArgoCD about the new revision,
+ensuring smooth and automated production synchronization.
+
+-----
+
+### 📦 Environments Running Smoothly\!
+
+Both the staging and production environments are
+running without any issues, as demonstrated by the following snapshots:
 
 ![image](images/project_4.9_1.png)
 
@@ -59,4 +105,7 @@ deploy/kubernetes/
 
 ![image](images/project_4.9_3.png)
 
-We can clearly see that the latest revision in production is 4.9
+As visible, the **latest revision in production is 4.9**, confirming successful
+and up-to-date deployments.
+
+-----

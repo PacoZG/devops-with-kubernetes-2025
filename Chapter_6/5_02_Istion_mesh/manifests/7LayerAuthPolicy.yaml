@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: productpage-waypoint
+  namespace: default
+spec:
+  targetRefs:
+    - kind: Service
+      group: ""
+      name: productpage
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/default/sa/curl
+      to:
+        - operation:
+            methods: [ "GET" ]

@@ -4,5 +4,5 @@ metadata:
   name: log-output-config
 data:
   information.txt: |
-    this is from file
+    content from a two line file
   MESSAGE: "hello world"

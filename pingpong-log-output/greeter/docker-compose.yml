@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  greeter:
+    image: greeter
+    container_name: greeter
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8001
+    ports:
+      - 8001:8001

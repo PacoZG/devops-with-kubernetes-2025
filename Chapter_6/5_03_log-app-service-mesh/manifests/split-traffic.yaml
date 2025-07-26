@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: greeter-svc
+spec:
+  hosts:
+    - greeter-svc
+  http:
+    - route:
+        - destination:
+            host: greeter-svc-v1
+            port:
+              number: 9080
+          weight: 75
+        - destination:
+            host: greeter-svc-v2
+            port:
+              number: 9080
+          weight: 25

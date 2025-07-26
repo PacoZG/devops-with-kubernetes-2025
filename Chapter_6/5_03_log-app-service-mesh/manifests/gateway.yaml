@@ -1,0 +1,40 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: log-gateway
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: log-output
+spec:
+  parentRefs:
+    - name: log-gateway
+  rules:
+    - matches:
+        - path:
+            type: Exact
+            value: /status
+      backendRefs:
+        - name: log-output-svc
+          port: 9080
+    - matches:
+        - path:
+            type: Exact
+            value: /pingpong
+        - path:
+            type: Exact
+            value: /pings
+      backendRefs:
+        - name: pingpong-svc
+          port: 9080
+

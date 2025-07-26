@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: greeter-svc
+spec:
+  selector:
+    app: greeter
+  ports:
+    - port: 9080
+      targetPort: 8001
+      protocol: TCP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter-dep-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: greeter
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: greeter
+        version: v1
+    spec:
+      containers:
+        - name: greeter-1
+          image: sirpacoder/greeter:v1
+          env:
+            - name: PORT
+              value: "8001"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: greeter-svc-v1
+spec:
+  type: ClusterIP
+  selector:
+    app: greeter
+    version: v1
+  ports:
+    - port: 9080
+      protocol: TCP
+      targetPort: 8001
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter-dep-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: greeter
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: greeter
+        version: v2
+    spec:
+      containers:
+        - name: greeter-2
+          image: sirpacoder/greeter:v2
+          env:
+            - name: PORT
+              value: "8001"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: greeter-svc-v2
+spec:
+  type: ClusterIP
+  selector:
+    app: greeter
+    version: v2
+  ports:
+    - port: 9080
+      protocol: TCP
+      targetPort: 8001
+

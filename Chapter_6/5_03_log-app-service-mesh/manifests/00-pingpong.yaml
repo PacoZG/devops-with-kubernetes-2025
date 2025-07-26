@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong-dep
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      volumes:
+        - name: shared-files
+          persistentVolumeClaim:
+            claimName: pingpong-files-claim
+      containers:
+        - name: pingpong
+          image: sirpacoder/pingpong:v5.3
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: shared-files
+              mountPath: /usr/src/app/shared/files
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 10
+            httpGet:
+              path: /healthz
+              port: 8000
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            httpGet:
+              path: /healthz
+              port: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: COUNT_FILE_PATH
+              value: "shared/files/count.txt"
+            - name: POSTGRES_HOST
+              value: postgres-svc
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pingpong-secret
+                  key: postgres-password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingpong-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: pingpong
+  ports:
+    - name: http
+      port: 9080
+      protocol: TCP
+      targetPort: 8000

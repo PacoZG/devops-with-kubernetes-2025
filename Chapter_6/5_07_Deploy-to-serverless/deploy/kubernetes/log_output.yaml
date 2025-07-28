@@ -1,0 +1,58 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: log-output-svc
+
+spec:
+  template:
+    metadata:
+      labels:
+        app: log-output
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+    spec:
+      volumes:
+        - name: shared-files
+          emptyDir: { }
+        - name: reader-files
+          configMap:
+            name: log-output-config
+            items:
+              - key: information.txt
+                path: information.txt
+      containers:
+        - name: hash-reader
+          image: sirpacoder/hash-reader:v5.7
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3001
+          env:
+            - name: HASH_FILE_PATH
+              value: "/usr/src/app/shared/files/hash.txt"
+            - name: INFORMATION_FILE_PATH
+              value: /usr/src/app/reader/info/information.txt
+            - name: PING_SERVER_URL
+              value: http://pingpong-svc.exercises.svc.cluster.local
+            - name: GREETER_SERVER_URL
+              value: http://greeter-svc.exercises.svc.cluster.local
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: log-output-config
+                  key: MESSAGE
+          volumeMounts:
+            - name: shared-files
+              mountPath: /usr/src/app/shared/files
+            - name: reader-files
+              mountPath: /usr/src/app/reader/info
+        - name: hash-generator
+          image: sirpacoder/hash-generator:v5.7
+          imagePullPolicy: Always
+          env:
+            - name: GENERATOR_PORT
+              value: "3002"
+            - name: HASH_FILE_PATH
+              value: "/usr/src/app/shared/files/hash.txt"
+          volumeMounts:
+            - name: shared-files
+              mountPath: /usr/src/app/shared/files

@@ -1,92 +1,62 @@
-# 🚀 Exercise 3.2: Back to Ingress
+# 🚀 Exercise 3.3. To the Gateway
 
 ### 🎯 Goal
 
-Deploy the **Pingpong application** into a **Google Kubernetes Engine (GKE)**
-cluster, exposing it with a **LoadBalancer service**.
+Replace the Ingress with Gateway API. See here for more about HTTP routing.
 
-Deploy the **Log output** and **Ping-pong** applications into **Google
-Kubernetes Engine (GKE)** and expose it with __Ingress__.
+Configuration for the Gateway can be found [here](./kubernetes/gateway)
 
-**Ping-pong** will have to respond from `/pingpong` path. This may require you
-to rewrite parts of the code.
-
----
-
-## 🛠️ Kubernetes Configuration Updates
-
-I had to rename the manifest files by prefixing them with numbers to ensure that
-the Ingress is created only after the corresponding services and pods are up and
-running.
-
----
-
-- [04-ingress.yaml](kubernetes/manifests/04-ingress.yaml)
+- [gateway.yaml](./kubernetes/gateway/gateway.yaml)
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
 metadata:
-  name: pingpong-log-output-ingress
+  name: pingpong-log-output-gateway
   namespace: exercises
-  labels:
-    name: pingpong-log-output
 spec:
+  gatewayClassName: gke-l7-global-external-managed
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        kinds:
+          - kind: HTTPRoute
+```
+
+- [route.yaml](./kubernetes/gateway/route.yaml)
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: pingpong-log-output-route
+  namespace: exercises
+spec:
+  parentRefs:
+    - name: pingpong-log-output-gateway
   rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: log-output-svc
-                port:
-                  number: 80
-          - path: /pingpong
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 80
-          - path: /reset
-            pathType: Prefix
-            backend:
-              service:
-                name: pingpong-svc
-                port:
-                  number: 80
-
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /pingpong
+      backendRefs:
+        - name: pingpong-svc
+          port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /reset
+      backendRefs:
+        - name: pingpong-svc
+          port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: log-output-svc
+          port: 80 
 ```
-
----
-
-## 🔍 Monitoring & Access
-
-Once deployed, you can retrieve the Ingress configuration where the available IP
-route is running the application by running:
-
-```shell
-  kubectl describe ingress pingpong-log-output-ingress -n exercises
-```
-
-* Note: Ingress routing can take several minutes to become fully active, so
-  there may be a delay before anything is visible in the browser.
-
-Alternatively, you can check it from the GCP Console:
-
-> Kubernetes Engine > Gateways, Services & Ingress
-
-> Ingress
-
-### 🧭 Useful Commands
-
-```
-  kubectl get pods
-  kubectl describe pod <pod-id>
-  kubectl logs <pod-id> --since 1h
-```
-
-These help monitor pod status, logs, and troubleshoot any issues.
-
 

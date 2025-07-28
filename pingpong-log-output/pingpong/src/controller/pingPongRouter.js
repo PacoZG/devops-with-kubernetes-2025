@@ -4,12 +4,12 @@ import setCounter from '../hooks/setCounter.js'
 
 const pingPongRouter = Router()
 
-pingPongRouter.get('/', (req, res) => {
-  res.status(200).send('pong')
-})
+// pingPongRouter.get('/', (req, res) => {
+//   res.status(200).send('pong')
+// })
 
-pingPongRouter.get('/pingpong', async (req, res) => {
-  console.log('GET request to path /pingpong done successfully')
+pingPongRouter.get('/', async (req, res) => {
+  console.log('GET request to path / done successfully')
   let counter = await getCounter()
   counter += 1
   await setCounter(counter)

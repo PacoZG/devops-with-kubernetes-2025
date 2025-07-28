@@ -26,7 +26,7 @@ spec:
 
       containers:
         - name: hash-reader
-          image: sirpacoder/hash-reader:v3.3
+          image: sirpacoder/hash-reader:v3.4
           imagePullPolicy: Always
           env:
             - name: READER_PORT
@@ -49,7 +49,7 @@ spec:
               mountPath: /usr/src/app/reader/info
 
         - name: hash-generator
-          image: sirpacoder/hash-generator:v3.3
+          image: sirpacoder/hash-generator:v3.4
           imagePullPolicy: Always
           env:
             - name: GENERATOR_PORT

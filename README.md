@@ -5,7 +5,7 @@
 | - [1.1](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.1)   | - [2.1](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.1)   | - [3.1](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/3.1) |
 | - [1.2](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.2)   | - [2.2](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.2)   | - [3.2](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/3.2) |
 | - [1.3](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.3)   | - [2.3](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.3)   | - [3.3](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/3.3) |
-| - [1.4](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.4)   | - [2.4](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.4)   |
+| - [1.4](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.4)   | - [2.4](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.4)   | - [3.4](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/3.4) |
 | - [1.5](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.5)   | - [2.5](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.5)   |
 | - [1.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.6)   | - [2.6](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.6)   |
 | - [1.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/1.7)   | - [2.7](https://github.com/PacoZG/devops-with-kubernetes-2025/tree/2.7)   |

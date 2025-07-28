@@ -23,32 +23,14 @@ spec:
             items:
               - key: information.txt
                 path: information.txt
-      containers:
-        - name: hash-generator
-          image: sirpacoder/hash-generator:v3.3
-          imagePullPolicy: Always
-          env:
-            - name: GENERATOR_PORT
-              value: "3002"
-            - name: HASH_FILE_PATH
-              value: "/usr/src/app/shared/files/hash.txt"
-          volumeMounts:
-            - name: shared-files
-              mountPath: /usr/src/app/shared/files
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
 
+      containers:
         - name: hash-reader
           image: sirpacoder/hash-reader:v3.3
           imagePullPolicy: Always
           env:
             - name: READER_PORT
-              value: "3001"
+              value: "8000"
             - name: HASH_FILE_PATH
               value: "/usr/src/app/shared/files/hash.txt"
             - name: INFORMATION_FILE_PATH
@@ -65,14 +47,21 @@ spec:
               mountPath: /usr/src/app/shared/files
             - name: reader-files
               mountPath: /usr/src/app/reader/info
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
+
+        - name: hash-generator
+          image: sirpacoder/hash-generator:v3.3
+          imagePullPolicy: Always
+          env:
+            - name: GENERATOR_PORT
+              value: "3002"
+            - name: HASH_FILE_PATH
+              value: "/usr/src/app/shared/files/hash.txt"
+          volumeMounts:
+            - name: shared-files
+              mountPath: /usr/src/app/shared/files
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -85,4 +74,4 @@ spec:
   ports:
     - port: 80
       protocol: TCP
-      targetPort: 3001
+      targetPort: 8000

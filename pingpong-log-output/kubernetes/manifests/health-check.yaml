@@ -12,7 +12,7 @@ spec:
     config:
       type: HTTP
       httpHealthCheck:
-        port: 3001
+        port: 8000
         requestPath: /
 ---
 apiVersion: networking.gke.io/v1

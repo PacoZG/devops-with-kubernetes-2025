@@ -13,22 +13,13 @@ spec:
       labels:
         app: pingpong
     spec:
-      volumes:
-        - name: shared-files
-          persistentVolumeClaim:
-            claimName: pingpong-files-claim
       containers:
         - name: pingpong
           image: sirpacoder/pingpong:v3.3
           imagePullPolicy: Always
-          volumeMounts:
-            - name: shared-files
-              mountPath: /usr/src/app/shared/files
           env:
             - name: PORT
               value: "8000"
-            - name: COUNT_FILE_PATH
-              value: "shared/files/count.txt"
             - name: POSTGRES_HOST
               value: postgres-svc
             - name: POSTGRES_USER
@@ -40,13 +31,6 @@ spec:
                 secretKeyRef:
                   name: pingpong-secret
                   key: postgres-password
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
 
 ---
 

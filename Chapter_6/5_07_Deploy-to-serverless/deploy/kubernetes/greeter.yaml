@@ -1,0 +1,16 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: greeter-svc
+spec:
+  template:
+    metadata:
+      labels:
+        app: greeter
+        version: v1
+    spec:
+      containers:
+        - name: greeter-1
+          image: sirpacoder/greeter:v1
+          ports:
+            - containerPort: 8001

@@ -1,9 +1,11 @@
 import http from 'http'
 import hashReaderApp from './apps/hashReaderApp.js'
-import { READER_PORT } from './utils/appConfig.js'
+import { PORT, READER_PORT } from './utils/appConfig.js'
+
+const readerPort = READER_PORT || PORT
 
 const readerServer = http.createServer(hashReaderApp)
 
-readerServer.listen(READER_PORT, () => {
-  console.log(`Reader server started in port ${READER_PORT}`)
+readerServer.listen(readerPort, () => {
+  console.log(`Reader server started in port ${readerPort}`)
 })

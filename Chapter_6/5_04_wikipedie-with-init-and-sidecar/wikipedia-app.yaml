@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wikipedia-app
+  labels:
+    app: wikipedia
+spec:
+  volumes:
+    - name: wikipedia-content
+      emptyDir: { }
+  initContainers:
+    - name: fetch-kubernetes-page
+      image: curlimages/curl:latest
+      command:
+        - "sh"
+        - "-c"
+        - "echo 'Fetching initial Kubernetes page...' && curl -s https://en.wikipedia.org/wiki/Kubernetes -o /usr/share/nginx/html/index.html && echo 'Initial page fetched.'"
+      volumeMounts:
+        - name: wikipedia-content
+          mountPath: /usr/share/nginx/html
+  containers:
+    - name: nginx-server
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: wikipedia-content
+          mountPath: /usr/share/nginx/html
+    - name: random-page-fetcher
+      image: curlimages/curl:latest
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          echo "Sidecar: Starting random page fetcher..."
+          while true; do
+            # Generate a random sleep time between 300 seconds (5 minutes) and 900 seconds (15 minutes)
+            SLEEP_TIME=$(( RANDOM % 601 + 300 )) 
+            echo "Sidecar: Waiting for $SLEEP_TIME seconds before next fetch..."
+            sleep $SLEEP_TIME
+            echo "Sidecar: Fetching a random Wikipedia page..."
+            # Use -L to follow redirects, -s for silent, -o to output to file, -w to write effective URL to stdout
+            FETCHED_URL=$(curl -L -s -o /usr/share/nginx/html/index.html -w "%{url_effective}" https://en.wikipedia.org/wiki/Special:Random)
+            echo "Sidecar: Fetched and saved page from URL: $FETCHED_URL"
+          done
+      volumeMounts:
+        - name: wikipedia-content
+          mountPath: /usr/share/nginx/html
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wikipedia-service
+spec:
+  selector:
+    app: wikipedia
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
